@@ -16,8 +16,8 @@ UnifiedCatalogPy simplifies the interaction with Microsoft Purview's Unified Cat
   - Health Actions
   - ~~Data Quality~~ (no API support yet!)
 
-> **Warning**
-> Please note that this library is currently in development, and the features listed above are yet to be implemented.
+> [!WARNING]
+> This library is currently in development and the features listed above are yet to be implemented.
 
 ## Quick Start 🚀
 
