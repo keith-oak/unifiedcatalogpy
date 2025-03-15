@@ -319,6 +319,7 @@ data_product = client.create_data_product(
     audience=[],
     business_use="<div>Use Case 1, 2, 3</div>",
     documentation=[],
+    updateFrequency="Weekly",
     endorsed=False,
     terms_of_use=[],
 )
@@ -350,6 +351,33 @@ print(data_product)
 
 #### Update a Data Product
 
+```python
+# Update a data product
+updated_data_product = client.update_data_product(
+    data_product_id="<your-data-product-id>",
+    governance_domain_id="<your-governance-domain-id>",
+    name="My Updated Data Product",
+    description="<div>This is an <b>updated</b> data product description.</div>",
+    owners=[
+        {
+            "id": "<owner-principal-id>",
+            "description": "Data Product Owner",
+        }
+    ],
+    status="Draft",
+    audience=[],
+    business_use="<div>Use Case 1, 2, 3</div>",
+    documentation=[],
+    endorsed=False,
+    terms_of_use=[],
+    type="Operational",
+    updateFrequency="Monthly",
+)
+
+# Show the updated data product
+print(updated_data_product)
+```
+
 #### Delete a Data Product
 
 ```python
@@ -361,6 +389,40 @@ if deleted:
 else:
     print("Failed to delete Data Product.")
 ```
+
+<!-- #### Link Glossary Term to a Data Product
+
+```python
+# Link a glossary term to a data product
+relationship = client.create_term_relationship(
+    term_id="<your-term-id>",
+    relationship_type="Related",
+    entity_id="<your-related-term-id>",
+    description="This is a related term relationship.",
+)
+
+# Show the relationship
+print(relationship)
+```
+
+#### Delete a Term Relationship (Synonyms / Related Terms)
+
+##### Delete a Synonym relationship
+
+```python
+# Delete a term relationship
+deleted = client.delete_term_relationship(
+    term_id="<your-term-id>",
+    entity_id="<your-target-term-id>",
+    relationship_type="Synonym",
+    entity_type="Term",
+)
+
+if deleted:
+    print("Synonym relationship deleted successfully.")
+else:
+    print("Failed to delete the synonym relationship.")
+``` -->
 
 ---
 
