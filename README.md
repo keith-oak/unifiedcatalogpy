@@ -427,11 +427,27 @@ print(objective)
 
 #### Retrieve all Objectives in a Governance Domain
 
-#### Retrieve an OKR by ID
+```python
+# Get all objectives in the governance domain
+objectives = client.get_objectives("<your-governance-domain-id>")
 
-#### Update an OKR
+# Show objectives
+print(objectives)
+```
 
-#### Delete an OKR
+#### Retrieve an Objective by ID
+
+```python
+# Get objective by its ID
+objective = client.get_objective_by_id("<your-objective-id>")
+
+# Show Objective
+print(objective)
+```
+
+#### Update an Objective
+
+#### Delete an Objective
 
 ---
 
