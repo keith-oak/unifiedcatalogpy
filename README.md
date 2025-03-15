@@ -28,21 +28,30 @@ UnifiedCatalogPy simplifies the interaction with Microsoft Purview's Unified Cat
 Start by installing the library. You will also need to install the `azure-identity` library to authenticate with Microsoft Purview.
 
 ```bash
-# Installation
+# Install the library
 pip install unifiedcatalogpy azure-identity
 ```
 
 In your Python code, you can use the library as follows:
 
 ```python
-# Import the dependencies
+# Import the library
 from unifiedcatalogpy import UnifiedCatalogClient
 from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
 
-# ...Coming soon...
+# Create the Unified Catalog Client
+client = UnifiedCatalogClient(
+    account_id="<your-purview-account-id>",
+    credential=credential
+)
+
+# Interact with the client
+domains = client.get_governance_domains()
 ```
+
+Detailed usage examples for each feature are provided in the sections below.
 
 ## Documentation 📖
 
@@ -54,11 +63,39 @@ An organizational object that provides context for your data assets and make it 
 
 ##### Create a Governance Domain
 
+```python
+# Create a new governance domain
+new_domain = client.create_governance_domain(
+    name="My First Domain",
+    description="<div>This is an example of a <b>rich text</b> description.</div>",
+    type="FunctionalUnit",
+    owners=[{ "id": "<owner-principal-id>" }],
+    status="Draft",
+)
+
+# Show the new governance domain
+print(new_domain)
+```
+
 ##### Retrieve Governance Domains
+
+```python
+# Get all governance domains
+domains = client.get_governance_domains()
+```
 
 ##### Update a Governance Domain
 
 ##### Delete a Governance Domain
+
+```python
+# Delete a governance domain by ID
+deleted = client.delete_governance_domain("<your-governance-domain-id>")
+if deleted:
+    print("Governance domain deleted successfully.")
+else:
+    print("Failed to delete governance domain.")
+```
 
 #### Glossary Term
 
@@ -66,11 +103,60 @@ Active values that provide context but also apply policies that determine how yo
 
 ##### Create a Glossary Term
 
-##### Retrieve a Glossary Term
+```python
+# Create new Glossary Term
+term = client.create_term(
+    name="My First Term",
+    description="<div>This is a <b>rich description</b> of my first term.</div>",
+    status="Draft",
+    governance_domain_id="<your-governance-domain-id>",
+    acronyms=["ACRONYM_1", "ACRONYM_2"],
+    resources=[
+        {
+            "name": "Read more details",
+            "url": "https://example.com",
+        }
+    ],
+    owners=[{"id": "<owner-principal-id>"}],
+)
+
+# Show the new glossary term
+print(term)
+```
+
+##### Retrieve Glossary Terms
+
+```python
+# Get all terms in the Governance Domain
+terms = client.get_terms("<your-governance-domain-id>")
+
+for term in terms:
+    print(term)
+```
+
+##### Retrieve a Glossary Term by ID
+
+```python
+# Get a specific term by ID
+term = client.get_term_by_id("<your-term-id>")
+
+# Show the term
+print(term)
+```
 
 ##### Update a Glossary Term
 
 ##### Delete a Glossary Term
+
+```python
+# Delete a term
+deleted = client.delete_term("<your-term-id>")
+
+if deleted:
+    print("Governance domain deleted successfully.")
+else:
+    print("Failed to delete governance domain.")
+```
 
 #### Data Product
 
@@ -192,21 +278,41 @@ Health actions are concrete steps you can take to improve data governance across
 
 1. ️Navigate to the Azure portal to [create a new Service Principal](https://learn.microsoft.com/en-us/purview/tutorial-using-rest-apis) for your application.
 2. Copy the Application (client) ID, Directory (tenant) ID, and Client Secret (value) into your Python environment variables.
-   ```
-   AZURE_CLIENT_ID=
-   AZURE_TENANT_ID=
-   AZURE_CLIENT_SECRET=
-   ```
+
+```
+
+AZURE_CLIENT_ID=
+AZURE_TENANT_ID=
+AZURE_CLIENT_SECRET=
+
+```
+
 3. Navigate to Properties tab of your Microsoft Purview Azure resource to locate your Purview account ID. It can be found in the Atlas endpoint URL.
-   ```
-   https://<your-purview-account-id>-api.purview-service.microsoft.com/catalog
-   ```
-   Copy the `<your-purview-account-id>` value into your Python environment variables.
-   ```
-   PURVIEW_ACCOUNT_ID=
-   ```
+
+```
+
+https://<your-purview-account-id>-api.purview-service.microsoft.com/catalog
+
+```
+
+Copy the `<your-purview-account-id>` value into your Python environment variables.
+
+```
+
+PURVIEW_ACCOUNT_ID=
+
+```
+
 4. Navigate to the Microsoft Purview portal _> Settings > Solution Settings > Unified Catalog > Roles and Permissions > Data Governance Administrators_ to add the Service Principal as a Data Governance Administrator.
 
 ## Additional Resources 🎉
 
 - [Coming Soon: Microsoft Purview Unified Catalog API Documentation]()
+
+```
+
+```
+
+```
+
+```
