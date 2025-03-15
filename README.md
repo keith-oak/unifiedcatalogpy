@@ -145,6 +145,8 @@ else:
     print("Failed to delete governance domain.")
 ```
 
+---
+
 ### Glossary Term
 
 Active values that provide context but also apply policies that determine how your data should be managed, governed, and made discoverable for use. [Learn more](https://learn.microsoft.com/en-us/purview/concept-glossary-terms)
@@ -297,29 +299,23 @@ else:
     print("Failed to delete the related relationship.")
 ```
 
+---
+
 ### Data Product
 
 A kit of data assets (tables, files, Power BI reports, etc.) that provides assets with a use case for ease of discovery and understanding. [Learn more](https://learn.microsoft.com/en-us/purview/concept-data-products)
 
 #### Create a Data Product
 
-#### Retrieve a Data Product
+#### Retrieve all Data Products in a Governance Domain
+
+#### Retrieve a Data Product by ID
 
 #### Update a Data Product
 
 #### Delete a Data Product
 
-#### Search Data Products
-
-#### Search Data Product by ID
-
-#### Search Data Product by Name
-
-#### Search Data Product by Type
-
-#### Search Data Product by Owner
-
-#### Search Data Product by Term
+---
 
 ### OKRs
 
@@ -327,25 +323,15 @@ Objectives and key results link data products directly to your objectives to bri
 
 #### Create an OKR
 
-#### Retrieve an OKR
+#### Retrieve all OKRs in a Governance Domain
+
+### Retrieve an OKR by ID
 
 #### Update an OKR
 
 #### Delete an OKR
 
-#### Search OKRs
-
-#### Search OKR by ID
-
-#### Search OKR by Name
-
-#### Search OKR by Owner
-
-#### Search OKR by Term
-
-#### Search OKR by Data Product
-
-#### Search OKR by Governance Domain
+---
 
 ### Critical Data Elements
 
@@ -353,27 +339,29 @@ Critical data elements are a logical grouping of important pieces of information
 
 #### Create a Critical Data Element
 
-#### Retrieve a Critical Data Element
+#### Retrieve all Critical Data Element in a Governance Domain
+
+#### Retrieve a Critical Data Element by ID
 
 #### Update a Critical Data Element
 
 #### Delete a Critical Data Element
 
-#### Search Critical Data Elements
+---
 
-#### Search Critical Data Element by ID
+### Requests
 
-#### Search Critical Data Element by Name
+If you discover a data product in the catalog that you would like to access, you can request access directly through Microsoft Purview. The request triggers a workflow requesting that the owners of the data resource grant you access to the data product. [Learn more](https://learn.microsoft.com/en-us/purview/unified-catalog-access-policies)
 
-#### Search Critical Data Element by Owner
+#### Create a Request
 
-#### Search Critical Data Element by Term
+#### Retrieve all Requests in a Governance Domain
 
-#### Search Critical Data Element by Data Product
+#### Retrieve a Request by ID
 
-#### Search Critical Data Element by Governance Domain
+#### Update a Request
 
-#### Search Critical Data Element by OKR
+#### Delete a Request
 
 ### Health Management
 
