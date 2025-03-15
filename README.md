@@ -260,6 +260,42 @@ relationship = client.create_term_relationship(
 print(relationship)
 ```
 
+##### Delete a Term Relationship (Synonyms / Related Terms)
+
+Delete a Synonym relationship
+
+```python
+# Delete a term relationship
+deleted = client.delete_term_relationship(
+    term_id="<your-term-id>",
+    entity_id="<your-target-term-id>",
+    relationship_type="Synonym",
+    entity_type="Term",
+)
+
+if deleted:
+    print("Synonym relationship deleted successfully.")
+else:
+    print("Failed to delete the synonym relationship.")
+```
+
+Delete a Related Term relationship
+
+```python
+# Delete a term relationship
+deleted = client.delete_term_relationship(
+    term_id="<your-term-id>",
+    entity_id="<your-target-term-id>",
+    relationship_type="Related",
+    entity_type="Term",
+)
+
+if deleted:
+    print("Related relationship deleted successfully.")
+else:
+    print("Failed to delete the related relationship.")
+```
+
 #### Data Product
 
 A kit of data assets (tables, files, Power BI reports, etc.) that provides assets with a use case for ease of discovery and understanding. [Learn more](https://learn.microsoft.com/en-us/purview/concept-data-products)
@@ -405,6 +441,10 @@ PURVIEW_ACCOUNT_ID=
 ## Additional Resources 🎉
 
 - [Coming Soon: Microsoft Purview Unified Catalog API Documentation]()
+
+```
+
+```
 
 ```
 
