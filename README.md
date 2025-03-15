@@ -421,7 +421,7 @@ objective = client.create_objective(
     target_date="2025-12-30T14:00:00.000Z",
 )
 
-# Show objective
+# Show the objective
 print(objective)
 ```
 
@@ -441,13 +441,43 @@ print(objectives)
 # Get objective by its ID
 objective = client.get_objective_by_id("<your-objective-id>")
 
-# Show Objective
+# Show the objective
 print(objective)
 ```
 
 #### Update an Objective
 
+```python
+# Update an objective
+updated_objective = client.update_objective(
+    objective_id="<your-objective-id>",
+    status="Draft",
+    governance_domain_id="<your-governance-domain-id>",
+    owners=[
+        {
+            "id": "<owner-principal-id>",
+            "description": "Objective Owner",
+        }
+    ],
+    definition="Improve customer service to improve satisfaction and retention rates.",
+    target_date="2025-06-15T14:00:00.000Z",
+)
+
+# Show updated objective
+print(updated_objective)
+```
+
 #### Delete an Objective
+
+```python
+# Delete an objective
+deleted = client.delete_objective("<your-objective-id>")
+
+if deleted:
+    print("Objective deleted successfully.")
+else:
+    print("Failed to delete Objective.")
+```
 
 ---
 
