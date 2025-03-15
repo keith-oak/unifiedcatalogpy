@@ -655,14 +655,14 @@ PURVIEW_ACCOUNT_ID=
 
 4. Navigate to the Microsoft Purview portal _> Settings > Solution Settings > Unified Catalog > Roles and Permissions > Data Governance Administrators_ to add the Service Principal as a Data Governance Administrator.
 
+## Limitations 🚧
+
+- This library is not affiliated with Microsoft.
+- The library is not locked to a specific version of the Microsoft Purview API as an official Microsoft Purview Data Governance API for the Unified Catalog is not yet available. This means functionality may change unexpectedly. Do not rely on this library in production for this reason.
+- The library is maintained on a best-effort basis. It is not a full-time project and PRs are welcome.
+- Managing business concept policies and data quality is not yet supported.
+- No automated tests are included, functionality has been manually tested on a best-effort basis. PRs are welcome to add tests.
+
 ## Additional Resources 🎉
 
 - [Coming Soon: Microsoft Purview Unified Catalog API Documentation]()
-
-```
-
-```
-
-```
-
-```
