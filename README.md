@@ -98,11 +98,21 @@ new_domain = client.create_governance_domain(
 print(new_domain)
 ```
 
-##### Retrieve Governance Domains
+##### Retrieve all Governance Domains
 
 ```python
 # Get all governance domains
 domains = client.get_governance_domains()
+```
+
+##### Retrieve a Governance Domain by ID
+
+```python
+# Get a governance domain by ID
+domain = client.get_governance_domain_by_id("<your-governance-domain-id>")
+
+# Show the governance domain
+print(domain)
 ```
 
 ##### Update a Governance Domain
@@ -161,7 +171,7 @@ term = client.create_term(
 print(term)
 ```
 
-##### Retrieve Glossary Terms
+##### Retrieve all Glossary Terms in a Governance Domain
 
 ```python
 # Get all terms in the governance domain
