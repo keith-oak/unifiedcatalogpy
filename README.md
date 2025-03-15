@@ -1,6 +1,8 @@
+![Banner](/assets/media/banner.png)
+
 # Introducing: UnifiedCatalogPy
 
-A Python wrapper for Microsoft Purview Data Governance's Unified Catalog API.
+An unofficial Python wrapper for Microsoft Purview Data Governance's Unified Catalog API. Not officially supported by Microsoft.
 
 ## Overview 🔥
 
@@ -183,6 +185,25 @@ Health actions are concrete steps you can take to improve data governance across
 ##### Search Health Action by Owner
 
 ##### Search Health Action by Date
+
+## Setup Instructions 🛠
+
+1. ️Navigate to the Azure portal to [create a new Service Principal](https://learn.microsoft.com/en-us/purview/tutorial-using-rest-apis) for your application.
+2. Copy the Application (client) ID, Directory (tenant) ID, and Client Secret (value) into your Python environment variables.
+   ```
+   AZURE_CLIENT_ID=
+   AZURE_TENANT_ID=
+   AZURE_CLIENT_SECRET=
+   ```
+3. Navigate to Properties tab of your Microsoft Purview Azure resource to locate your Purview account ID. It can be found in the Atlas endpoint URL.
+   ```
+   https://<your-purview-account-id>-api.purview-service.microsoft.com/catalog
+   ```
+   Copy the `<your-purview-account-id>` value into your Python environment variables.
+   ```
+   PURVIEW_ACCOUNT_ID=
+   ```
+4. Navigate to the Microsoft Purview portal _> Settings > Solution Settings > Unified Catalog > Roles and Permissions > Data Governance Administrators_ to add the Service Principal as a Data Governance Administrator.
 
 ## Additional Resources 🎉
 
