@@ -307,13 +307,60 @@ A kit of data assets (tables, files, Power BI reports, etc.) that provides asset
 
 #### Create a Data Product
 
+```python
+# Create a new Data Product
+data_product = client.create_data_product(
+    governance_domain_id=governance_domain,
+    name="My First Data Product",
+    description="<div>This is a <b>new</b> data product created for demonstration purposes.</div>",
+    type="Operational",
+    owners=[{"id": "<owner-principal-id>"}],
+    status="Draft",
+    audience=[],
+    business_use="<div>Use Case 1, 2, 3</div>",
+    documentation=[],
+    endorsed=False,
+    terms_of_use=[],
+)
+
+# Show Data Product
+print(data_product)
+```
+
 #### Retrieve all Data Products in a Governance Domain
 
+```python
+# Get all data products in the governance domain
+data_products = client.get_data_products("<your-governance-domain-id>")
+
+# Enumerate the data products
+for data_product in data_products:
+    print(data_product)
+```
+
 #### Retrieve a Data Product by ID
+
+```python
+# Get data product by ID
+data_product = client.get_data_product_by_id("<your-data-product-id>")
+
+# Show data product
+print(data_product)
+```
 
 #### Update a Data Product
 
 #### Delete a Data Product
+
+```python
+# Delete data product
+deleted = client.delete_data_product("<your-data-product-id>")
+
+if deleted:
+    print("Data Product deleted successfully.")
+else:
+    print("Failed to delete Data Product.")
+```
 
 ---
 
