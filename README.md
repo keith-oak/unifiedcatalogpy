@@ -147,7 +147,7 @@ else:
 
 ---
 
-### Glossary Term
+### Glossary Terms
 
 Active values that provide context but also apply policies that determine how your data should be managed, governed, and made discoverable for use. [Learn more](https://learn.microsoft.com/en-us/purview/concept-glossary-terms)
 
@@ -301,7 +301,7 @@ else:
 
 ---
 
-### Data Product
+### Data Products
 
 A kit of data assets (tables, files, Power BI reports, etc.) that provides assets with a use case for ease of discovery and understanding. [Learn more](https://learn.microsoft.com/en-us/purview/concept-data-products)
 
@@ -325,7 +325,7 @@ Objectives and key results link data products directly to your objectives to bri
 
 #### Retrieve all OKRs in a Governance Domain
 
-### Retrieve an OKR by ID
+#### Retrieve an OKR by ID
 
 #### Update an OKR
 
@@ -363,6 +363,8 @@ If you discover a data product in the catalog that you would like to access, you
 
 #### Delete a Request
 
+---
+
 ### Health Management
 
 Health management refers to the ongoing processes and practices involved in ensuring that an organization's data remains accurate, complete, consistent, secure, and accessible throughout its lifecycle.
@@ -390,16 +392,6 @@ Health actions are concrete steps you can take to improve data governance across
 ##### Update a Health Action
 
 ##### Delete a Health Action
-
-##### Search Health Actions
-
-##### Search Health Action by ID
-
-##### Search Health Action by Type
-
-##### Search Health Action by Owner
-
-##### Search Health Action by Date
 
 ## Setup Instructions 🛠
 
@@ -430,11 +422,3 @@ PURVIEW_ACCOUNT_ID=
 ## Additional Resources 🎉
 
 - [Coming Soon: Microsoft Purview Unified Catalog API Documentation]()
-
-```
-
-```
-
-```
-
-```
