@@ -228,6 +228,38 @@ else:
     print("Failed to delete governance domain.")
 ```
 
+##### Create a Term Relationship (Synonyms / Related Terms)
+
+Link Term to a Synonymous term
+
+```python
+# Link a synonym to a term
+relationship = client.create_term_relationship(
+    term_id="<your-term-id>",
+    relationship_type="Synonym",
+    entity_id="<your-target-term-id>",
+    description="This is a synonym relationship.",
+)
+
+# Show the relationship
+print(relationship)
+```
+
+Link Term to a Related Term
+
+```python
+# Link a related term to a term
+relationship = client.create_term_relationship(
+    term_id="<your-term-id>",
+    relationship_type="Related",
+    entity_id="<your-related-term-id>",
+    description="This is a related term relationship.",
+)
+
+# Show the relationship
+print(relationship)
+```
+
 #### Data Product
 
 A kit of data assets (tables, files, Power BI reports, etc.) that provides assets with a use case for ease of discovery and understanding. [Learn more](https://learn.microsoft.com/en-us/purview/concept-data-products)
@@ -348,22 +380,32 @@ Health actions are concrete steps you can take to improve data governance across
 
 1. ️Navigate to the Azure portal to [create a new Service Principal](https://learn.microsoft.com/en-us/purview/tutorial-using-rest-apis) for your application.
 2. Copy the Application (client) ID, Directory (tenant) ID, and Client Secret (value) into your Python environment variables.
-   ```
-   AZURE_CLIENT_ID=
-   AZURE_TENANT_ID=
-   AZURE_CLIENT_SECRET=
-   ```
+
+```
+
+AZURE_CLIENT_ID=
+AZURE_TENANT_ID=
+AZURE_CLIENT_SECRET=
+
+```
+
 3. Navigate to Properties tab of your Microsoft Purview Azure resource to locate your Purview account ID. It can be found in the Atlas endpoint URL.
    `https://<your-purview-account-id>-api.purview-service.microsoft.com/catalog`
 
-   Copy the `<your-purview-account-id>` value into your Python environment variables.
+Copy the `<your-purview-account-id>` value into your Python environment variables.
 
-   ```
-   PURVIEW_ACCOUNT_ID=
-   ```
+```
+
+PURVIEW_ACCOUNT_ID=
+
+```
 
 4. Navigate to the Microsoft Purview portal _> Settings > Solution Settings > Unified Catalog > Roles and Permissions > Data Governance Administrators_ to add the Service Principal as a Data Governance Administrator.
 
 ## Additional Resources 🎉
 
 - [Coming Soon: Microsoft Purview Unified Catalog API Documentation]()
+
+```
+
+```
