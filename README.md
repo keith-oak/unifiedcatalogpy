@@ -390,13 +390,21 @@ else:
     print("Failed to delete Data Product.")
 ```
 
-#### Link Glossary Term to a Data Product
+#### Link a Glossary Term to a Data Product
 
-#### Link Asset to a Data Product
+#### Unlink a Glossary Term from a Data Product
 
-#### Link OKR to a Data Product
+#### Link an Asset to a Data Product
 
-#### Link Critical Data Element to a Data Product
+#### Unlink an Asset from a Data Product
+
+#### Link an Objective to a Data Product
+
+#### Unlink an Objective from a Data Product
+
+#### Link a Critical Data Element to a Data Product
+
+#### Unlink a Critical Data Element from a Data Product
 
 ---
 
@@ -495,7 +503,7 @@ else:
 
 ---
 
-### Critical Data Elements
+### Critical Data Elements (CDEs)
 
 Critical data elements are a logical grouping of important pieces of information across your data estate. [Learn more](https://learn.microsoft.com/en-us/purview/how-to-create-manage-critical-data)
 
@@ -516,13 +524,64 @@ cde = client.create_critical_data_element(
 print(cde)
 ```
 
-#### Retrieve all Critical Data Element in a Governance Domain
+#### Retrieve all Critical Data Elements in a Governance Domain
+
+```python
+# Get all critical data elements in the governance domain
+cdes = client.get_critical_data_elements("<your-governance-domain-id>")
+
+# Enumerate the critical data elements
+for cde in cdes:
+    print(cde)
+```
 
 #### Retrieve a Critical Data Element by ID
 
+```python
+# Get critical data element by its ID
+cde = client.get_critical_data_element_by_id("<your-critical-data-element-id>")
+
+# Show critical data element
+print(cde)
+```
+
 #### Update a Critical Data Element
 
+```python
+# Update a critical data element
+updated_cde = client.update_critical_data_element(
+    cde_id="<your-critical-data-element-id>",
+    name="Customer Identifier (CID)",
+    description="<div>An <b>updated description</b> of a customer identifier.</div>",
+    status="Draft",
+    governance_domain_id="<your-governance-domain-id>",
+    data_type="String",
+    owners=[{ "id": "<owner-principal-id>" }],
+)
+
+# Show updated critical data element
+print(updated_cde)
+```
+
 #### Delete a Critical Data Element
+
+```python
+# Delete a critical data element
+deleted = client.delete_critical_data_element("<your-critical-data-element-id>")
+
+if deleted:
+    print("Critical Data Element deleted successfully.")
+else:
+    print("Failed to delete Critical Data Element.")
+```
+
+#### Add a Column to a Critical Data Element
+
+#### Remove a Column from a Critical Data Element
+
+#### Link a Glossary Term to a Critical Data Element
+
+#### Unlink a Glossary Term from a Critical Data Element
 
 ---
 
