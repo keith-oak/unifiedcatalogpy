@@ -230,7 +230,7 @@ else:
 
 ##### Create a Term Relationship (Synonyms / Related Terms)
 
-Link Term to a Synonymous term
+###### Link Term to a Synonym
 
 ```python
 # Link a synonym to a term
@@ -245,7 +245,7 @@ relationship = client.create_term_relationship(
 print(relationship)
 ```
 
-Link Term to a Related Term
+###### Link Term to a Related Term
 
 ```python
 # Link a related term to a term
@@ -262,7 +262,7 @@ print(relationship)
 
 ##### Delete a Term Relationship (Synonyms / Related Terms)
 
-Delete a Synonym relationship
+###### Delete a Synonym relationship
 
 ```python
 # Delete a term relationship
@@ -279,7 +279,7 @@ else:
     print("Failed to delete the synonym relationship.")
 ```
 
-Delete a Related Term relationship
+###### Delete a Related Term relationship
 
 ```python
 # Delete a term relationship
