@@ -479,6 +479,20 @@ else:
     print("Failed to delete Objective.")
 ```
 
+#### Create a Key Result for an Objective
+
+#### Retrieve all Key Results of an Objective
+
+#### Retrieve a Key Result by ID
+
+#### Update a Key Result of an Objective
+
+#### Delete a Key Result of an Objective
+
+#### Link a Data Product to an Objective
+
+#### Unlink a Data Product from an Objective
+
 ---
 
 ### Critical Data Elements
@@ -486,6 +500,21 @@ else:
 Critical data elements are a logical grouping of important pieces of information across your data estate. [Learn more](https://learn.microsoft.com/en-us/purview/how-to-create-manage-critical-data)
 
 #### Create a Critical Data Element
+
+```python
+# Create a critical data element
+cde = client.create_critical_data_element(
+    name="Customer Identifier (CID)",
+    status="Draft",
+    governance_domain_id="<your-governance-domain-id>",
+    description="<div>Describes a numeric <b>customer identifier</b> throughout the data estate.</div>",
+    data_type="Number",
+    owners=[{ "id": "<owner-principal-id>" }],
+)
+
+# Show critical data element
+print(cde)
+```
 
 #### Retrieve all Critical Data Element in a Governance Domain
 
@@ -546,7 +575,7 @@ Health actions are concrete steps you can take to improve data governance across
 1. ️Navigate to the Azure portal to [create a new Service Principal](https://learn.microsoft.com/en-us/purview/tutorial-using-rest-apis) for your application.
 2. Copy the Application (client) ID, Directory (tenant) ID, and Client Secret (value) into your Python environment variables.
 
-````
+```
 
 AZURE_CLIENT_ID=
 AZURE_TENANT_ID=
@@ -570,5 +599,11 @@ PURVIEW_ACCOUNT_ID=
 ## Additional Resources 🎉
 
 - [Coming Soon: Microsoft Purview Unified Catalog API Documentation]()
+
 ```
-````
+
+```
+
+```
+
+```
