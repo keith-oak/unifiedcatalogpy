@@ -39,7 +39,7 @@ pip install unifiedcatalogpy azure-identity
 Microsoft Purview requires an authorized identity to perform tasks. You can choose between authenticating as a user (via [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/get-started-with-azure-cli)) or using a Service Principal.
 
 > [!NOTE]
-> In most cases you should be using a Service Principal to query Purview (RBAC permissions can be scoped independently of a user). Remember that ownership of an artifact defaults to its creator unless you specify a user/group creation.
+> In most cases you should be using a Service Principal to query Microsoft Purview (RBAC permissions can be scoped independently of a user). Remember that ownership of an artifact defaults to its creator unless you specify a user/group at creation.
 
 If you are using the Azure CLI, be sure to log in using `az login` before running your Python notebook. Alternatively, follow the instructions to set up a Service Principal in the [Setup Instructions](#setup-instructions).
 
@@ -107,6 +107,21 @@ domains = client.get_governance_domains()
 
 ##### Update a Governance Domain
 
+```python
+# Update a governance domain by ID
+updated_domain = client.update_governance_domain(
+    governance_domain_id="<your-governance-domain-id>",
+    name="Updated Domain Name",
+    description="<div>This is an updated domain description.</div>",
+    type="FunctionalUnit",
+    owners=[{ "id": "<owner-principal-id>" }],
+    status="Draft",
+)
+
+# Show the updated governance domain
+print(updated_domain)
+```
+
 ##### Delete a Governance Domain
 
 ```python
@@ -126,7 +141,7 @@ Active values that provide context but also apply policies that determine how yo
 ##### Create a Glossary Term
 
 ```python
-# Create new Glossary Term
+# Create new glossary term
 term = client.create_term(
     name="My First Term",
     description="<div>This is a <b>rich description</b> of my first term.</div>",
@@ -149,7 +164,7 @@ print(term)
 ##### Retrieve Glossary Terms
 
 ```python
-# Get all terms in the Governance Domain
+# Get all terms in the governance domain
 terms = client.get_terms("<your-governance-domain-id>")
 
 for term in terms:
