@@ -177,6 +177,7 @@ print(term)
 # Get all terms in the governance domain
 terms = client.get_terms("<your-governance-domain-id>")
 
+# Enumerate the terms
 for term in terms:
     print(term)
 ```
@@ -192,6 +193,28 @@ print(term)
 ```
 
 ##### Update a Glossary Term
+
+```python
+# Update a term
+updated_term = client.update_term(
+    term_id="<your-term-id>",
+    name="Updated Term Name",
+    description="<div>This is an updated term description.</div>",
+    governance_domain_id="<your-governance-domain-id>",
+    owners=[{"id": "<owner-principal-id>"}],
+    acronyms=["ACRONYM_1_UPDATED", "ACRONYM_2_UPDATED"],
+    resources=[
+        {
+            "name": "Read more about this term",
+            "url": "https://example.com/more",
+        }
+    ],
+    status="Draft",
+)
+
+# Show the updated term
+print(updated_term)
+```
 
 ##### Delete a Glossary Term
 
