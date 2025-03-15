@@ -390,49 +390,42 @@ else:
     print("Failed to delete Data Product.")
 ```
 
-<!-- #### Link Glossary Term to a Data Product
+#### Link Glossary Term to a Data Product
 
-```python
-# Link a glossary term to a data product
-relationship = client.create_term_relationship(
-    term_id="<your-term-id>",
-    relationship_type="Related",
-    entity_id="<your-related-term-id>",
-    description="This is a related term relationship.",
-)
+#### Link Asset to a Data Product
 
-# Show the relationship
-print(relationship)
-```
+#### Link OKR to a Data Product
 
-#### Delete a Term Relationship (Synonyms / Related Terms)
-
-##### Delete a Synonym relationship
-
-```python
-# Delete a term relationship
-deleted = client.delete_term_relationship(
-    term_id="<your-term-id>",
-    entity_id="<your-target-term-id>",
-    relationship_type="Synonym",
-    entity_type="Term",
-)
-
-if deleted:
-    print("Synonym relationship deleted successfully.")
-else:
-    print("Failed to delete the synonym relationship.")
-``` -->
+#### Link Critical Data Element to a Data Product
 
 ---
 
-### OKRs
+### Objectives and Key Results (OKRs)
 
 Objectives and key results link data products directly to your objectives to bridge the gap between your business and Unified Catalog. You use data to discover and track objectives in your business, and Unified Catalog should make it easy to see those connections and track your goals. [Learn more](https://learn.microsoft.com/en-us/purview/concept-okr)
 
-#### Create an OKR
+#### Create an Objective
 
-#### Retrieve all OKRs in a Governance Domain
+```python
+# Create an objective
+objective = client.create_objective(
+    definition="Revamp customer service to improve satisfaction and retention rates.",
+    governance_domain_id="<your-governance-domain-id>",
+    status="Draft",
+    owners=[
+        {
+            "id": "<owner-principal-id>",
+            "description": "Objective Owner",
+        }
+    ],
+    target_date="2025-12-30T14:00:00.000Z",
+)
+
+# Show objective
+print(objective)
+```
+
+#### Retrieve all Objectives in a Governance Domain
 
 #### Retrieve an OKR by ID
 
@@ -507,7 +500,7 @@ Health actions are concrete steps you can take to improve data governance across
 1. ️Navigate to the Azure portal to [create a new Service Principal](https://learn.microsoft.com/en-us/purview/tutorial-using-rest-apis) for your application.
 2. Copy the Application (client) ID, Directory (tenant) ID, and Client Secret (value) into your Python environment variables.
 
-```
+````
 
 AZURE_CLIENT_ID=
 AZURE_TENANT_ID=
@@ -531,3 +524,5 @@ PURVIEW_ACCOUNT_ID=
 ## Additional Resources 🎉
 
 - [Coming Soon: Microsoft Purview Unified Catalog API Documentation]()
+```
+````
