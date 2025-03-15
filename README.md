@@ -10,11 +10,12 @@ UnifiedCatalogPy simplifies the interaction with Microsoft Purview's Unified Cat
 
 **Interact with:**
 
-- Governance Domains (Discovery and Management)
-  - Glossary Terms
-  - Data Products
-  - OKRs (Objectives and Key Results)
-  - Critical Data Elements
+- Governance Domains
+- Glossary Terms
+- Data Products
+- OKRs (Objectives and Key Results)
+- Critical Data Elements
+- Requests
 - Health Management
   - Health Controls
   - Health Actions
@@ -78,11 +79,11 @@ Detailed usage examples for each feature are provided in the sections below.
 
 These features are yet to be developed, but the following are planned:
 
-#### Governance Domain
+### Governance Domain
 
 An organizational object that provides context for your data assets and make it easier scale data governance practices. [Learn more](https://learn.microsoft.com/en-us/purview/concept-governance-domain)
 
-##### Create a Governance Domain
+#### Create a Governance Domain
 
 ```python
 # Create a new governance domain
@@ -98,14 +99,14 @@ new_domain = client.create_governance_domain(
 print(new_domain)
 ```
 
-##### Retrieve all Governance Domains
+#### Retrieve all Governance Domains
 
 ```python
 # Get all governance domains
 domains = client.get_governance_domains()
 ```
 
-##### Retrieve a Governance Domain by ID
+#### Retrieve a Governance Domain by ID
 
 ```python
 # Get a governance domain by ID
@@ -115,7 +116,7 @@ domain = client.get_governance_domain_by_id("<your-governance-domain-id>")
 print(domain)
 ```
 
-##### Update a Governance Domain
+#### Update a Governance Domain
 
 ```python
 # Update a governance domain by ID
@@ -132,7 +133,7 @@ updated_domain = client.update_governance_domain(
 print(updated_domain)
 ```
 
-##### Delete a Governance Domain
+#### Delete a Governance Domain
 
 ```python
 # Delete a governance domain by ID
@@ -144,11 +145,11 @@ else:
     print("Failed to delete governance domain.")
 ```
 
-#### Glossary Term
+### Glossary Term
 
 Active values that provide context but also apply policies that determine how your data should be managed, governed, and made discoverable for use. [Learn more](https://learn.microsoft.com/en-us/purview/concept-glossary-terms)
 
-##### Create a Glossary Term
+#### Create a Glossary Term
 
 ```python
 # Create new glossary term
@@ -171,7 +172,7 @@ term = client.create_term(
 print(term)
 ```
 
-##### Retrieve all Glossary Terms in a Governance Domain
+#### Retrieve all Glossary Terms in a Governance Domain
 
 ```python
 # Get all terms in the governance domain
@@ -182,7 +183,7 @@ for term in terms:
     print(term)
 ```
 
-##### Retrieve a Glossary Term by ID
+#### Retrieve a Glossary Term by ID
 
 ```python
 # Get a specific term by ID
@@ -192,7 +193,7 @@ term = client.get_term_by_id("<your-term-id>")
 print(term)
 ```
 
-##### Update a Glossary Term
+#### Update a Glossary Term
 
 ```python
 # Update a term
@@ -216,7 +217,7 @@ updated_term = client.update_term(
 print(updated_term)
 ```
 
-##### Delete a Glossary Term
+#### Delete a Glossary Term
 
 ```python
 # Delete a term
@@ -228,9 +229,9 @@ else:
     print("Failed to delete governance domain.")
 ```
 
-##### Create a Term Relationship (Synonyms / Related Terms)
+#### Create a Term Relationship (Synonyms / Related Terms)
 
-###### Link Term to a Synonym
+##### Link Term to a Synonym
 
 ```python
 # Link a synonym to a term
@@ -245,7 +246,7 @@ relationship = client.create_term_relationship(
 print(relationship)
 ```
 
-###### Link Term to a Related Term
+##### Link Term to a Related Term
 
 ```python
 # Link a related term to a term
@@ -260,9 +261,9 @@ relationship = client.create_term_relationship(
 print(relationship)
 ```
 
-##### Delete a Term Relationship (Synonyms / Related Terms)
+#### Delete a Term Relationship (Synonyms / Related Terms)
 
-###### Delete a Synonym relationship
+##### Delete a Synonym relationship
 
 ```python
 # Delete a term relationship
@@ -279,7 +280,7 @@ else:
     print("Failed to delete the synonym relationship.")
 ```
 
-###### Delete a Related Term relationship
+##### Delete a Related Term relationship
 
 ```python
 # Delete a term relationship
@@ -296,83 +297,83 @@ else:
     print("Failed to delete the related relationship.")
 ```
 
-#### Data Product
+### Data Product
 
 A kit of data assets (tables, files, Power BI reports, etc.) that provides assets with a use case for ease of discovery and understanding. [Learn more](https://learn.microsoft.com/en-us/purview/concept-data-products)
 
-##### Create a Data Product
+#### Create a Data Product
 
-##### Retrieve a Data Product
+#### Retrieve a Data Product
 
-##### Update a Data Product
+#### Update a Data Product
 
-##### Delete a Data Product
+#### Delete a Data Product
 
-##### Search Data Products
+#### Search Data Products
 
-##### Search Data Product by ID
+#### Search Data Product by ID
 
-##### Search Data Product by Name
+#### Search Data Product by Name
 
-##### Search Data Product by Type
+#### Search Data Product by Type
 
-##### Search Data Product by Owner
+#### Search Data Product by Owner
 
-##### Search Data Product by Term
+#### Search Data Product by Term
 
-#### OKRs
+### OKRs
 
 Objectives and key results link data products directly to your objectives to bridge the gap between your business and Unified Catalog. You use data to discover and track objectives in your business, and Unified Catalog should make it easy to see those connections and track your goals. [Learn more](https://learn.microsoft.com/en-us/purview/concept-okr)
 
-##### Create an OKR
+#### Create an OKR
 
-##### Retrieve an OKR
+#### Retrieve an OKR
 
-##### Update an OKR
+#### Update an OKR
 
-##### Delete an OKR
+#### Delete an OKR
 
-##### Search OKRs
+#### Search OKRs
 
-##### Search OKR by ID
+#### Search OKR by ID
 
-##### Search OKR by Name
+#### Search OKR by Name
 
-##### Search OKR by Owner
+#### Search OKR by Owner
 
-##### Search OKR by Term
+#### Search OKR by Term
 
-##### Search OKR by Data Product
+#### Search OKR by Data Product
 
-##### Search OKR by Governance Domain
+#### Search OKR by Governance Domain
 
-#### Critical Data Element
+### Critical Data Elements
 
 Critical data elements are a logical grouping of important pieces of information across your data estate. [Learn more](https://learn.microsoft.com/en-us/purview/how-to-create-manage-critical-data)
 
-##### Create a Critical Data Element
+#### Create a Critical Data Element
 
-##### Retrieve a Critical Data Element
+#### Retrieve a Critical Data Element
 
-##### Update a Critical Data Element
+#### Update a Critical Data Element
 
-##### Delete a Critical Data Element
+#### Delete a Critical Data Element
 
-##### Search Critical Data Elements
+#### Search Critical Data Elements
 
-##### Search Critical Data Element by ID
+#### Search Critical Data Element by ID
 
-##### Search Critical Data Element by Name
+#### Search Critical Data Element by Name
 
-##### Search Critical Data Element by Owner
+#### Search Critical Data Element by Owner
 
-##### Search Critical Data Element by Term
+#### Search Critical Data Element by Term
 
-##### Search Critical Data Element by Data Product
+#### Search Critical Data Element by Data Product
 
-##### Search Critical Data Element by Governance Domain
+#### Search Critical Data Element by Governance Domain
 
-##### Search Critical Data Element by OKR
+#### Search Critical Data Element by OKR
 
 ### Health Management
 
