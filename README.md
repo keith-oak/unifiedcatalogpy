@@ -6,7 +6,9 @@ An unofficial Python wrapper for Microsoft Purview Data Governance's Unified Cat
 
 ## Overview 🔥
 
-UnifiedCatalogPy simplifies the interaction with Microsoft Purview's Unified Catalog API. It provides a set of features that allow you to manage and interact with various data governance elements, including operations for creating, retrieving, updating, and deleting business concepts:
+UnifiedCatalogPy simplifies the interaction with Microsoft Purview's Unified Catalog API. It provides a set of features that allow you to manage and interact with various data governance elements, including operations for creating, retrieving, updating, and deleting business concepts.
+
+**Interact with:**
 
 - Governance Domains (Discovery and Management)
   - Glossary Terms
@@ -19,7 +21,7 @@ UnifiedCatalogPy simplifies the interaction with Microsoft Purview's Unified Cat
   - ~~Data Quality~~ (no API support yet!)
 
 > [!WARNING]
-> This library is currently in development and the features listed above are yet to be implemented.
+> This library is currently in development and the features listed above are yet to be implemented. It is not affiliated with Microsoft.
 
 ## Quick Start 🚀
 
