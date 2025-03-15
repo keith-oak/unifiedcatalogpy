@@ -25,6 +25,8 @@ UnifiedCatalogPy simplifies the interaction with Microsoft Purview's Unified Cat
 
 ## Quick Start 🚀
 
+### 1. Installation
+
 Start by installing the library. You will also need to install the `azure-identity` library to authenticate with Microsoft Purview.
 
 ```bash
@@ -32,7 +34,26 @@ Start by installing the library. You will also need to install the `azure-identi
 pip install unifiedcatalogpy azure-identity
 ```
 
-In your Python code, you can use the library as follows:
+### 2. Authentication
+
+Microsoft Purview requires an authorized identity to perform tasks. You can choose between authenticating as a user (via [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/get-started-with-azure-cli)) or using a Service Principal.
+
+> [!NOTE]
+> In most cases you should be using a Service Principal to query Purview (RBAC permissions can be scoped independently of a user). Remember that ownership of an artifact defaults to its creator unless you specify a user/group creation.
+
+If you are using the Azure CLI, be sure to log in using `az login` before running your Python notebook. Alternatively, follow the instructions to set up a Service Principal in the [Setup Instructions](#setup-instructions).
+
+Configure your environment variables (per [Setup Instructions](#setup-instructions)):
+
+```
+AZURE_CLIENT_ID=
+AZURE_TENANT_ID=
+AZURE_CLIENT_SECRET=
+```
+
+### 3. Using the Client
+
+In your Python notebook, you can use the library as follows:
 
 ```python
 # Import the library
@@ -91,6 +112,7 @@ domains = client.get_governance_domains()
 ```python
 # Delete a governance domain by ID
 deleted = client.delete_governance_domain("<your-governance-domain-id>")
+
 if deleted:
     print("Governance domain deleted successfully.")
 else:
@@ -278,41 +300,22 @@ Health actions are concrete steps you can take to improve data governance across
 
 1. ️Navigate to the Azure portal to [create a new Service Principal](https://learn.microsoft.com/en-us/purview/tutorial-using-rest-apis) for your application.
 2. Copy the Application (client) ID, Directory (tenant) ID, and Client Secret (value) into your Python environment variables.
-
-```
-
-AZURE_CLIENT_ID=
-AZURE_TENANT_ID=
-AZURE_CLIENT_SECRET=
-
-```
-
+   ```
+   AZURE_CLIENT_ID=
+   AZURE_TENANT_ID=
+   AZURE_CLIENT_SECRET=
+   ```
 3. Navigate to Properties tab of your Microsoft Purview Azure resource to locate your Purview account ID. It can be found in the Atlas endpoint URL.
+   `https://<your-purview-account-id>-api.purview-service.microsoft.com/catalog`
 
-```
+   Copy the `<your-purview-account-id>` value into your Python environment variables.
 
-https://<your-purview-account-id>-api.purview-service.microsoft.com/catalog
-
-```
-
-Copy the `<your-purview-account-id>` value into your Python environment variables.
-
-```
-
-PURVIEW_ACCOUNT_ID=
-
-```
+   ```
+   PURVIEW_ACCOUNT_ID=
+   ```
 
 4. Navigate to the Microsoft Purview portal _> Settings > Solution Settings > Unified Catalog > Roles and Permissions > Data Governance Administrators_ to add the Service Principal as a Data Governance Administrator.
 
 ## Additional Resources 🎉
 
 - [Coming Soon: Microsoft Purview Unified Catalog API Documentation]()
-
-```
-
-```
-
-```
-
-```
