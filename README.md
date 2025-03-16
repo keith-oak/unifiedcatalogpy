@@ -52,18 +52,16 @@ If you are using the Azure CLI, be sure to log in using `az login` before runnin
 1. ️Navigate to the Azure portal to [create a new Service Principal](https://learn.microsoft.com/en-us/purview/tutorial-using-rest-apis) for your application and generate a client secret.
 2. Copy the Application (client) ID, Directory (tenant) ID, and Client Secret (value) into your Python environment variables.
 
-```
-
-AZURE_CLIENT_ID=
-AZURE_TENANT_ID=
-AZURE_CLIENT_SECRET=
-
-```
+   ```
+   AZURE_CLIENT_ID=
+   AZURE_TENANT_ID=
+   AZURE_CLIENT_SECRET=
+   ```
 
 3. Navigate to Properties tab of your Microsoft Purview Azure resource to locate your Purview account ID. It can be found in the Atlas endpoint URL.
    `https://<your-purview-account-id>-api.purview-service.microsoft.com/catalog`
 
-Copy the `<your-purview-account-id>` value into your Python environment variables.
+   Copy the `<your-purview-account-id>` - you will need it later to create the client.
 
 4. Navigate to the Microsoft Purview portal _> Settings > Solution Settings > Unified Catalog > Roles and Permissions > Data Governance Administrators_ and add the Service Principal as a **Data Governance Administrator**.
 
