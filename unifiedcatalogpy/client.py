@@ -1,6 +1,5 @@
 from typing import List, Literal
 from .utils import format_base_url
-from json import JSONDecodeError
 from .api_client import ApiClient
 
 
