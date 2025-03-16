@@ -2,7 +2,7 @@
 
 # Introducing: UnifiedCatalogPy
 
-An unofficial Python wrapper for Microsoft Purview Data Governance's Unified Catalog API. Not affiliated or officially supported by Microsoft. Built as a personal project by observing Microsoft Purview browser network calls and reverse engineering the API.
+An unofficial Python wrapper for Microsoft Purview Data Governance's Unified Catalog API. Not affiliated or officially supported by Microsoft. Built as a personal project by tediously observing the internet browser's XHR network traffic and reverse engineering the API - [☕️ buy me a coffee](https://buymeacoffee.com/olafwrieden).
 
 ## Overview 🔥
 
@@ -13,8 +13,8 @@ UnifiedCatalogPy simplifies the interaction with Microsoft Purview's Unified Cat
 - Governance Domains
 - Glossary Terms
 - Data Products
-- OKRs (Objectives and Key Results)
-- Critical Data Elements
+- Objectives and Key Results (OKRs)
+- Critical Data Elements (CDEs)
 - Requests
 - Health Management
   - Health Controls
@@ -489,13 +489,78 @@ else:
 
 #### Create a Key Result for an Objective
 
+```python
+# Create a key result
+key_result = client.create_key_result(
+    progress=60,
+    goal=80,
+    max=100,
+    status="AtRisk",
+    definition="Increase customer satisfaction score by 20%.",
+    objective_id="<your-objective-id>",
+    governance_domain_id="<your-governance-domain-id>",
+)
+
+# Show the key result
+print(key_result)
+```
+
 #### Retrieve all Key Results of an Objective
+
+```python
+# Get all key results of an objective
+key_results = client.get_key_results("<your-objective-id>")
+
+# Show the key results
+print(key_results)
+```
 
 #### Retrieve a Key Result by ID
 
+```python
+# Get a key result by ID
+key_result = client.get_key_result_by_id(
+    key_result_id="<your-key-result-id>",
+    objective_id="<your-objective-id>",
+)
+
+# Show key result
+print(key_result)
+```
+
 #### Update a Key Result of an Objective
 
+```python
+# Update a key result
+updated_key_result = client.update_key_result(
+    key_result_id="<your-key-result-id>",
+    progress=70,
+    goal=80,
+    max=100,
+    status="OnTrack",
+    definition="Increase customer satisfaction score by 20%.",
+    objective_id="<your-objective-id>",
+    governance_domain_id="<your-governance-domain-id>",
+)
+
+# Show the updated key result
+print(updated_key_result)
+```
+
 #### Delete a Key Result of an Objective
+
+```python
+# Delete a key result
+deleted = client.delete_key_result(
+    key_result_id="<your-key-result-id>",
+    objective_id="<your-objective-id>",
+)
+
+if deleted:
+    print("Key Result deleted successfully.")
+else:
+    print("Failed to delete Key Result.")
+```
 
 #### Link a Data Product to an Objective
 
