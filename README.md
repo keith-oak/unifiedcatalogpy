@@ -59,7 +59,8 @@ If you are using the Azure CLI, be sure to log in using `az login` before runnin
    ```
 
 3. Navigate to the _Properties_ tab of your Microsoft Purview Azure resource to locate your Purview account ID. It can be found in the _Atlas endpoint URL_.
-   `https://<your-purview-account-id>-api.purview-service.microsoft.com/catalog`
+
+   **Example:** `https://<your-purview-account-id>-api.purview-service.microsoft.com/catalog`
 
    Copy the `<your-purview-account-id>` - you will need it in a moment to create the client.
 
@@ -88,14 +89,14 @@ client = UnifiedCatalogClient(
 domains = client.get_governance_domains()
 ```
 
-**💡 Good to know:** Detailed usage examples for supported functionality is provided in the documentation section below. _Let's get automating!_
+**💡 Good to know:** Detailed usage examples for supported functionality is provided in the documentation section below. _Let's automate!_
 
 ## Documentation 📖
 
 Here is what's possible with the `UnifiedCatalogPy` client.
 
 > [!NOTE]
-> Remember that the library is not locked to a specific version of the Microsoft Purview API as an official API for the Unified Catalog is not yet available. This means functionality may change unexpectedly. [See limitations](#limitations-)
+> This library is not locked to a specific version of the Microsoft Purview API as an official API for the Unified Catalog is not yet available. This means functionality may change unexpectedly. [See limitations](#limitations-)
 
 ### Governance Domain
 
@@ -123,6 +124,8 @@ print(new_domain)
 # Get all governance domains
 domains = client.get_governance_domains()
 ```
+
+_Note: Pagination over governance domains is not yet supported._
 
 #### Retrieve a Governance Domain by ID
 
@@ -202,6 +205,8 @@ terms = client.get_terms("<your-governance-domain-id>")
 for term in terms:
     print(term)
 ```
+
+_Note: Pagination over glossary terms is not yet supported._
 
 #### Retrieve a Glossary Term by ID
 
@@ -357,6 +362,8 @@ for data_product in data_products:
     print(data_product)
 ```
 
+_Note: Pagination over data products is not yet supported._
+
 #### Retrieve a Data Product by ID
 
 ```python
@@ -460,6 +467,8 @@ objectives = client.get_objectives("<your-governance-domain-id>")
 # Show objectives
 print(objectives)
 ```
+
+_Note: Pagination over objectives is not yet supported._
 
 #### Retrieve an Objective by ID
 
@@ -617,6 +626,8 @@ cdes = client.get_critical_data_elements("<your-governance-domain-id>")
 for cde in cdes:
     print(cde)
 ```
+
+_Note: Pagination over critical data elements is not yet supported._
 
 #### Retrieve a Critical Data Element by ID
 
