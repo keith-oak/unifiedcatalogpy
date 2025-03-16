@@ -15,8 +15,8 @@ UnifiedCatalogPy simplifies the interaction with Microsoft Purview's Unified Cat
 - Data Products
 - Objectives and Key Results (OKRs)
 - Critical Data Elements (CDEs)
-- Requests
-- Health Management
+- Requests (🚧 coming soon)
+- Health Management (🚧 coming soon)
   - Health Controls
   - Health Actions
   - ~~Data Quality~~ (no API support yet!)
@@ -654,6 +654,9 @@ else:
 
 If you discover a data product in the catalog that you would like to access, you can request access directly through Microsoft Purview. The request triggers a workflow requesting that the owners of the data resource grant you access to the data product. [Learn more](https://learn.microsoft.com/en-us/purview/unified-catalog-access-policies)
 
+> [!WARNING]
+> You cannot interact with Requests through this library yet. This is work in progress.
+
 #### Create a Request
 
 #### Retrieve all Requests in a Governance Domain
@@ -674,6 +677,9 @@ Health management refers to the ongoing processes and practices involved in ensu
 
 Track your journey to complete data governance by monitoring health controls to track your progress. Health controls measure your current governance practices against standards that give your data estate a score. [Learn more](https://learn.microsoft.com/en-us/purview/how-to-health-controls)
 
+> [!WARNING]
+> You cannot interact with Health Controls through this library yet. This is work in progress.
+
 ##### Create a Health Control
 
 ##### Retrieve a Health Control
@@ -685,6 +691,9 @@ Track your journey to complete data governance by monitoring health controls to 
 #### Health Actions
 
 Health actions are concrete steps you can take to improve data governance across your data estate. The actions are provided in a single list that can focus your data governance journey, and democratize ownership. Completing these actions will improve data quality and discoverability across your data estate. [Learn more](https://learn.microsoft.com/en-us/purview/data-estate-health-actions)
+
+> [!WARNING]
+> You cannot interact with Health Actions through this library yet. This is work in progress.
 
 ##### Create a Health Action
 
