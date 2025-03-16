@@ -1,8 +1,8 @@
-![Banner](/assets/media/banner.png)
+![Banner](https://raw.githubusercontent.com/olafwrieden/unifiedcatalogpy/main/assets/media/banner.png)
 
 # Introducing: UnifiedCatalogPy
 
-An unofficial Python wrapper for Microsoft Purview Data Governance's Unified Catalog API. Not affiliated or officially supported by Microsoft. Built as a personal project by tediously observing the internet browser's XHR network traffic and reverse engineering the API - [☕️ buy me a coffee](https://buymeacoffee.com/olafwrieden).
+An unofficial Python wrapper for Microsoft Purview Data Governance's Unified Catalog API. Not affiliated or officially supported by Microsoft. Built as a personal project by tediously observing the internet browser's XHR network traffic and reverse engineering the API - ☕️ [buy me a coffee](https://buymeacoffee.com/olafwrieden).
 
 **A DOWNLOAD LINK TO THE FIRST PYPI RELEASE IS COMING SOON!**
 
