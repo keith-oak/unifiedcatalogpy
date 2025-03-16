@@ -32,3 +32,6 @@ Changelog = "https://github.com/olafwrieden/unifiedcatalogpy/commits/main/"
 
 [tool.setuptools]
 packages = ["unifiedcatalogpy"]
+
+[tool.setuptools.dynamic]
+version = {attr = "unifiedcatalogpy.__version__"}
