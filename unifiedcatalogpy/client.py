@@ -1,11 +1,11 @@
 from typing import List, Literal
-from unifiedcatalogpy.utils import format_base_url
-from unifiedcatalogpy.api_client import ApiClient
+from .utils import format_base_url
+from .api_client import ApiClient
 
 
 class UnifiedCatalogClient:
     """
-    Unified Catalog Client for interacting with the Unified Catalog API.
+    Microsoft Purview Unified Catalog client for interacting with the Unified Catalog API.
     """
 
     def __init__(self, account_id: str, credential: any):
