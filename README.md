@@ -4,8 +4,6 @@
 
 An unofficial Python wrapper for Microsoft Purview Data Governance's Unified Catalog API. Not affiliated or officially supported by Microsoft. Built as a personal project by tediously observing the internet browser's XHR network traffic and reverse engineering the API - ☕️ [buy me a coffee](https://buymeacoffee.com/olafwrieden).
 
-**A DOWNLOAD LINK TO THE FIRST PYPI RELEASE IS COMING SOON!**
-
 ## Overview 🔥
 
 UnifiedCatalogPy simplifies the interaction with Microsoft Purview's Unified Catalog API. It provides a set of features that allow you to manage and interact with various data governance elements, including operations for creating, retrieving, updating, and deleting business concepts.
