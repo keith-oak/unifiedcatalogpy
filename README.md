@@ -755,6 +755,7 @@ Data quality is the measurement of the quality of data in an organization, based
 - The library is maintained on a best-effort basis. It is not a full-time project and PRs are welcome.
 - Managing business concept policies and data quality is not yet supported.
 - No automated tests are included, functionality has been manually tested on a best-effort basis. PRs are welcome to add tests.
+- No typed return schema is provided as the API is not yet stable.
 
 ## Additional Resources 🎉
 
