@@ -1,6 +1,6 @@
 from typing import List, Literal
-from .utils import format_base_url
-from .api_client import ApiClient
+from unifiedcatalogpy.utils import format_base_url
+from unifiedcatalogpy.api_client import ApiClient
 
 
 class UnifiedCatalogClient:

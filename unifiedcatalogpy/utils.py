@@ -1,6 +1,3 @@
-from typing import Literal
-
-
 def format_base_url(account_id: str) -> str:
     """
     Format the base URL for the Unified Catalog API.
