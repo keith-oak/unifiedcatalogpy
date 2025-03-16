@@ -58,14 +58,14 @@ If you are using the Azure CLI, be sure to log in using `az login` before runnin
    AZURE_CLIENT_SECRET=
    ```
 
-3. Navigate to Properties tab of your Microsoft Purview Azure resource to locate your Purview account ID. It can be found in the Atlas endpoint URL.
+3. Navigate to the _Properties_ tab of your Microsoft Purview Azure resource to locate your Purview account ID. It can be found in the _Atlas endpoint URL_.
    `https://<your-purview-account-id>-api.purview-service.microsoft.com/catalog`
 
-   Copy the `<your-purview-account-id>` - you will need it later to create the client.
+   Copy the `<your-purview-account-id>` - you will need it in a moment to create the client.
 
 4. Navigate to the Microsoft Purview portal _> Settings > Solution Settings > Unified Catalog > Roles and Permissions > Data Governance Administrators_ and add the Service Principal as a **Data Governance Administrator**.
 
-5. Your Python code should now be authorized to interact with Microsoft Purview Data Governance Unified Catalog API. Let's test it out! 🚀
+5. Your Service Principal is now authorized to interact with Microsoft Purview Data Governance Unified Catalog API. Let's test it out! 🚀
 
 ### 3. Using the Client
 
