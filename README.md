@@ -15,6 +15,7 @@ UnifiedCatalogPy simplifies the interaction with Microsoft Purview's Unified Cat
 - Data Products
 - Objectives and Key Results (OKRs)
 - Critical Data Elements (CDEs)
+- Custom Attributes (🚧 coming soon)
 - Requests (🚧 coming soon)
 - Health Management (🚧 coming soon)
   - Health Controls
@@ -568,7 +569,7 @@ else:
 
 ---
 
-### Critical Data Elements (CDEs)
+### Critical Data Elements (preview)
 
 Critical data elements are a logical grouping of important pieces of information across your data estate. [Learn more](https://learn.microsoft.com/en-us/purview/how-to-create-manage-critical-data)
 
@@ -650,12 +651,21 @@ else:
 
 ---
 
+### Custom Attributes (preview)
+
+Custom attributes are admin-defined, attributes that can be applied to add additional metadata to business concepts in the Unified Catalog.
+
+> [!WARNING]
+> You cannot interact with Custom Attributes through this library yet.
+
+---
+
 ### Requests
 
 If you discover a data product in the catalog that you would like to access, you can request access directly through Microsoft Purview. The request triggers a workflow requesting that the owners of the data resource grant you access to the data product. [Learn more](https://learn.microsoft.com/en-us/purview/unified-catalog-access-policies)
 
 > [!WARNING]
-> You cannot interact with Requests through this library yet. This is work in progress.
+> You cannot interact with Requests through this library yet. This is work in progress. A pull request to add this functionality is welcome.
 
 #### Create a Request
 
@@ -673,12 +683,12 @@ If you discover a data product in the catalog that you would like to access, you
 
 Health management refers to the ongoing processes and practices involved in ensuring that an organization's data remains accurate, complete, consistent, secure, and accessible throughout its lifecycle.
 
-#### Health Controls
+#### Health Controls (preview)
 
 Track your journey to complete data governance by monitoring health controls to track your progress. Health controls measure your current governance practices against standards that give your data estate a score. [Learn more](https://learn.microsoft.com/en-us/purview/how-to-health-controls)
 
 > [!WARNING]
-> You cannot interact with Health Controls through this library yet. This is work in progress.
+> You cannot interact with Health Controls through this library yet. This is work in progress. A pull request to add this functionality is welcome.
 
 ##### Create a Health Control
 
@@ -688,12 +698,12 @@ Track your journey to complete data governance by monitoring health controls to 
 
 ##### Delete a Health Control
 
-#### Health Actions
+#### Health Actions (preview)
 
 Health actions are concrete steps you can take to improve data governance across your data estate. The actions are provided in a single list that can focus your data governance journey, and democratize ownership. Completing these actions will improve data quality and discoverability across your data estate. [Learn more](https://learn.microsoft.com/en-us/purview/data-estate-health-actions)
 
 > [!WARNING]
-> You cannot interact with Health Actions through this library yet. This is work in progress.
+> You cannot interact with Health Actions through this library yet. This is work in progress. A pull request to add this functionality is welcome.
 
 ##### Create a Health Action
 
@@ -702,6 +712,13 @@ Health actions are concrete steps you can take to improve data governance across
 ##### Update a Health Action
 
 ##### Delete a Health Action
+
+#### Data Quality
+
+Data quality is the measurement of the quality of data in an organization, based on data quality rules that are configured and defined in Unified Catalog. [Learn more](https://learn.microsoft.com/en-us/purview/data-quality-overview)
+
+> [!WARNING]
+> You cannot interact with Data Quality through this library yet. There is a lot of complexity in the API, data quality sub-features, and interpretation of the results. A pull request to add this functionality is welcome.
 
 ## Setup Instructions 🛠
 
