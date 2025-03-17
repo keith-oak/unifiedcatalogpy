@@ -110,7 +110,7 @@ new_domain = client.create_governance_domain(
     name="My First Domain",
     description="<div>This is an example of a <b>rich text</b> description.</div>",
     type="FunctionalUnit",
-    owners=[{ "id": "<owner-principal-id>" }],
+    owners=[{ "id": "<entra-object-id>" }],
     status="Draft",
 )
 
@@ -146,7 +146,7 @@ updated_domain = client.update_governance_domain(
     name="Updated Domain Name",
     description="<div>This is an updated domain description.</div>",
     type="FunctionalUnit",
-    owners=[{ "id": "<owner-principal-id>" }],
+    owners=[{ "id": "<entra-object-id>" }],
     status="Draft",
 )
 
@@ -188,7 +188,7 @@ term = client.create_term(
             "url": "https://example.com",
         }
     ],
-    owners=[{"id": "<owner-principal-id>"}],
+    owners=[{"id": "<entra-object-id>"}],
 )
 
 # Show the new glossary term
@@ -227,7 +227,7 @@ updated_term = client.update_term(
     name="Updated Term Name",
     description="<div>This is an updated term description.</div>",
     governance_domain_id="<your-governance-domain-id>",
-    owners=[{"id": "<owner-principal-id>"}],
+    owners=[{"id": "<entra-object-id>"}],
     acronyms=["ACRONYM_1_UPDATED", "ACRONYM_2_UPDATED"],
     resources=[
         {
@@ -337,7 +337,7 @@ data_product = client.create_data_product(
     name="My First Data Product",
     description="<div>This is a <b>new</b> data product created for demonstration purposes.</div>",
     type="Operational",
-    owners=[{"id": "<owner-principal-id>"}],
+    owners=[{"id": "<entra-object-id>"}],
     status="Draft",
     audience=[],
     business_use="<div>Use Case 1, 2, 3</div>",
@@ -385,7 +385,7 @@ updated_data_product = client.update_data_product(
     description="<div>This is an <b>updated</b> data product description.</div>",
     owners=[
         {
-            "id": "<owner-principal-id>",
+            "id": "<entra-object-id>",
             "description": "Data Product Owner",
         }
     ],
@@ -447,7 +447,7 @@ objective = client.create_objective(
     status="Draft",
     owners=[
         {
-            "id": "<owner-principal-id>",
+            "id": "<entra-object-id>",
             "description": "Objective Owner",
         }
     ],
@@ -490,7 +490,7 @@ updated_objective = client.update_objective(
     governance_domain_id="<your-governance-domain-id>",
     owners=[
         {
-            "id": "<owner-principal-id>",
+            "id": "<entra-object-id>",
             "description": "Objective Owner",
         }
     ],
@@ -609,7 +609,7 @@ cde = client.create_critical_data_element(
     governance_domain_id="<your-governance-domain-id>",
     description="<div>Describes a numeric <b>customer identifier</b> throughout the data estate.</div>",
     data_type="Number",
-    owners=[{ "id": "<owner-principal-id>" }],
+    owners=[{ "id": "<entra-object-id>" }],
 )
 
 # Show critical data element
@@ -650,7 +650,7 @@ updated_cde = client.update_critical_data_element(
     status="Draft",
     governance_domain_id="<your-governance-domain-id>",
     data_type="String",
-    owners=[{ "id": "<owner-principal-id>" }],
+    owners=[{ "id": "<entra-object-id>" }],
 )
 
 # Show updated critical data element

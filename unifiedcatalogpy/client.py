@@ -39,13 +39,19 @@ class UnifiedCatalogClient:
         response = self.api_client.get(f"/businessdomains/{domain_id}")
         return response.data
 
+    GovernanceDomainType = Literal[
+        "FunctionalUnit", "LineOfBusiness", "DataDomain", "Regulatory", "Project"
+    ]
+
+    GovernanceDomainStatus = Literal["Draft", "Published"]
+
     def create_governance_domain(
         self,
         name: str,
         description: str,
-        type: str,
+        type: GovernanceDomainType,
         parent_id: str = None,
-        status: str = "Draft",
+        status: GovernanceDomainStatus = "Draft",
     ):
         """
         Create a new governance domain.
@@ -76,7 +82,7 @@ class UnifiedCatalogClient:
         type: str = None,
         parent_id: str = None,
         owners: List[dict] = [],
-        status: str = "Draft",
+        status: GovernanceDomainStatus = "Draft",
     ):
         data = {
             "id": governance_domain_id,
@@ -112,6 +118,8 @@ class UnifiedCatalogClient:
         except Exception as e:
             raise Exception(e)
 
+    TermStatus = Literal["Draft", "Published", "Expired"]
+
     def get_terms(self, governance_domain_id: str):
         """
         Get the list of terms.
@@ -130,7 +138,7 @@ class UnifiedCatalogClient:
         owners: List[dict] = [],
         acronyms: List[str] = [],
         resources: List[dict] = [],
-        status: str = "Draft",
+        status: TermStatus = "Draft",
     ):
         """
         Create a new term.
@@ -173,7 +181,7 @@ class UnifiedCatalogClient:
         owners: List[dict] = [],
         acronyms: List[str] = [],
         resources: List[dict] = [],
-        status: str = "Draft",
+        status: TermStatus = "Draft",
     ):
         """
         Update an existing term.
@@ -367,6 +375,19 @@ class UnifiedCatalogClient:
     #         raise Exception(e)
 
     # Data Products
+    DataProductStatus = Literal["Draft", "Published", "Expired"]
+    DataProductType = Literal[
+        "Dataset",
+        "MasterDataAndReferenceData",
+        "BusinessSystemOrApplication",
+        "ModelTypes",
+        "DashboardsOrReports",
+        "Operational",
+    ]
+    DataProductUpdateFrequency = Literal[
+        "Hourly", "Daily", "Weekly", "Monthly", "Quarterly", "Yearly"
+    ]
+
     def get_data_products(self, governance_domain_id: str):
         """
         Get the list of data products."
@@ -393,14 +414,14 @@ class UnifiedCatalogClient:
         name: str,
         description: str,
         governance_domain_id: str,
-        type: str,
+        type: DataProductType,
         business_use: str,
         owners: List[dict] = [],
         audience: List[str] = [],
         terms_of_use: List[str] = [],
         documentation: List[str] = [],
-        updateFrequency: str = None,
-        status: str = "Draft",
+        updateFrequency: DataProductUpdateFrequency = None,
+        status: DataProductStatus = "Draft",
         endorsed: bool = False,
     ):
         """
@@ -455,8 +476,8 @@ class UnifiedCatalogClient:
         audience: List[str] = [],
         terms_of_use: List[str] = [],
         documentation: List[str] = [],
-        updateFrequency: str = None,
-        status: str = "Draft",
+        updateFrequency: DataProductUpdateFrequency = None,
+        status: DataProductStatus = "Draft",
         endorsed: bool = False,
     ):
         """
@@ -521,12 +542,15 @@ class UnifiedCatalogClient:
     # {"entityId":"94e22736-067d-4283-9806-1efdbac07297","description":"Test Term Description","relationshipType":"Related"}
     # Delete: dataproducts/58ddd299-5434-493b-956f-01c76171621f/relationships?entityType=Term&entityId=4939d006-fff0-4bad-9b03-53700b48b31b&relationshipType=Related
 
+    # Objectives
+    ObjectiveStatus = Literal["Draft", "Published", "Closed"]
+
     def create_objective(
         self,
         definition: str,
         governance_domain_id: str,
         owners: List[dict] = [],
-        status: str = "Draft",
+        status: ObjectiveStatus = "Draft",
         target_date: str = None,
     ):
         """
@@ -536,7 +560,7 @@ class UnifiedCatalogClient:
         :param governance_domain_id: The ID of the governance domain.
         :param owners: Optional ids of the owners of the objective.
         :param status: Optional status of the objective.
-        :param target_date: Optional target date of the objective.
+        :param target_date: Optional target date of the objective. Eg: "2025-01-01T00:00:00Z"
         :return: The created objective.
         """
 
@@ -583,7 +607,7 @@ class UnifiedCatalogClient:
         definition: str = None,
         governance_domain_id: str = None,
         owners: List[dict] = [],
-        status: str = "Draft",
+        status: ObjectiveStatus = "Draft",
         target_date: str = None,
     ):
         """
@@ -594,7 +618,7 @@ class UnifiedCatalogClient:
         :param governance_domain_id: The new ID of the governance domain.
         :param owners: Optional new ids of the owners of the objective.
         :param status: Optional new status of the objective.
-        :param target_date: Optional new target date of the objective.
+        :param target_date: Optional new target date of the objective. Eg: "2025-01-01T00:00:00Z"
         :return: The updated objective.
         """
 
@@ -631,13 +655,16 @@ class UnifiedCatalogClient:
         except Exception as e:
             raise Exception(e)
 
+    # Critical Data Elements
+    CriticalDataElementStatus = Literal["Draft", "Published", "Expired"]
+
     def create_critical_data_element(
         self,
         name: str,
         description: str,
         governance_domain_id: str,
         owners: List[dict] = [],
-        status: str = "Draft",
+        status: CriticalDataElementStatus = "Draft",
         data_type: str = "Number",
     ):
         """
@@ -698,7 +725,7 @@ class UnifiedCatalogClient:
         description: str = None,
         governance_domain_id: str = None,
         owners: List[dict] = [],
-        status: str = "Draft",
+        status: CriticalDataElementStatus = "Draft",
         data_type: str = "Number",
     ):
         """
@@ -748,6 +775,7 @@ class UnifiedCatalogClient:
         except Exception as e:
             raise Exception(e)
 
+    # Key Results
     KeyResultStatus = Literal["Behind", "OnTrack", "AtRisk"]
 
     def create_key_result(
@@ -771,7 +799,13 @@ class UnifiedCatalogClient:
         :param objective_id: The ID of the objective.
         :param governance_domain_id: The ID of the governance domain.
         :return: The created key result.
+        :raises ValueError: If progress, goal, or max are negative integers.
         """
+
+        if progress < 0 or goal < 0 or max <= 0:
+            raise ValueError(
+                "Progress and goal must be zero (0) or positive integers, max must be a positive integer."
+            )
 
         data = {
             "progress": progress,
@@ -809,7 +843,13 @@ class UnifiedCatalogClient:
         :param status: The new status of the key result.
         :param definition: The new definition of the key result.
         :return: The updated key result.
+        :raises ValueError: If progress, goal, or max are negative integers.
         """
+
+        if progress < 0 or goal < 0 or max <= 0:
+            raise ValueError(
+                "Progress and goal must be zero (0) or positive integers, max must be a positive integer."
+            )
 
         data = {
             "id": key_result_id,
