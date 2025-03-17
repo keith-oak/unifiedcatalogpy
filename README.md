@@ -74,7 +74,7 @@ In your Python notebook, you can use the library as follows:
 
 ```python
 # Import the library
-from unifiedcatalogpy import UnifiedCatalogClient
+from unfiedcatalogpy.client import UnifiedCatalogClient
 from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
