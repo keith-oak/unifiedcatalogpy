@@ -1441,3 +1441,17 @@ class UnifiedCatalogClient:
             f"/objectives/{objective_id}/keyResults/{key_result_id}"
         )
         return response.data
+    
+    def __enter__(self):
+        """Support context manager protocol."""
+        return self
+    
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """Clean up resources on exit."""
+        if hasattr(self, 'api_client'):
+            self.api_client.close()
+    
+    def close(self):
+        """Close the client and clean up resources."""
+        if hasattr(self, 'api_client'):
+            self.api_client.close()

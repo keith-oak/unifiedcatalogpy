@@ -417,19 +417,104 @@ else:
 
 #### Link a Glossary Term to a Data Product
 
+```python
+# Link a term to a data product
+relationship = client.link_term_to_data_product(
+    data_product_id="<your-data-product-id>",
+    term_id="<your-term-id>",
+    description="This term defines key concepts used in this data product",
+    relationship_type="Related"  # or "Synonym"
+)
+
+# Show the created relationship
+print(relationship)
+```
+
 #### Unlink a Glossary Term from a Data Product
+
+```python
+# Unlink a term from a data product
+success = client.unlink_term_from_data_product(
+    data_product_id="<your-data-product-id>",
+    term_id="<your-term-id>",
+    relationship_type="Related"  # Must match the relationship type used when linking
+)
+
+if success:
+    print("Term unlinked successfully.")
+else:
+    print("Failed to unlink term.")
+```
 
 #### Link an Asset to a Data Product
 
+_Note: Asset linking requires the asset management API which is not yet implemented in this library._
+
 #### Unlink an Asset from a Data Product
+
+_Note: Asset unlinking requires the asset management API which is not yet implemented in this library._
 
 #### Link an Objective to a Data Product
 
+```python
+# Link an objective to a data product
+relationship = client.link_objective_to_data_product(
+    data_product_id="<your-data-product-id>",
+    objective_id="<your-objective-id>",
+    description="This data product supports achieving this business objective",
+    relationship_type="Related"
+)
+
+# Show the created relationship
+print(relationship)
+```
+
 #### Unlink an Objective from a Data Product
+
+```python
+# Unlink an objective from a data product
+success = client.unlink_objective_from_data_product(
+    data_product_id="<your-data-product-id>",
+    objective_id="<your-objective-id>",
+    relationship_type="Related"
+)
+
+if success:
+    print("Objective unlinked successfully.")
+else:
+    print("Failed to unlink objective.")
+```
 
 #### Link a Critical Data Element to a Data Product
 
+```python
+# Link a critical data element to a data product
+relationship = client.link_critical_data_element_to_data_product(
+    data_product_id="<your-data-product-id>",
+    cde_id="<your-cde-id>",
+    description="This CDE is a key component of this data product",
+    relationship_type="Related"
+)
+
+# Show the created relationship
+print(relationship)
+```
+
 #### Unlink a Critical Data Element from a Data Product
+
+```python
+# Unlink a critical data element from a data product
+success = client.unlink_critical_data_element_from_data_product(
+    data_product_id="<your-data-product-id>",
+    cde_id="<your-cde-id>",
+    relationship_type="Related"
+)
+
+if success:
+    print("Critical data element unlinked successfully.")
+else:
+    print("Failed to unlink critical data element.")
+```
 
 ---
 
@@ -671,11 +756,63 @@ else:
 
 #### Add a Column to a Critical Data Element
 
+```python
+# Add a column to a critical data element
+result = client.add_column_to_critical_data_element(
+    cde_id="<your-critical-data-element-id>",
+    column_qualified_name="mssql://server.database.com/db/schema/table#column",
+    column_display_name="Customer ID Column"
+)
+
+# Show the result
+print(result)
+```
+
 #### Remove a Column from a Critical Data Element
+
+```python
+# Remove a column from a critical data element
+success = client.remove_column_from_critical_data_element(
+    cde_id="<your-critical-data-element-id>",
+    column_qualified_name="mssql://server.database.com/db/schema/table#column"
+)
+
+if success:
+    print("Column removed successfully.")
+else:
+    print("Failed to remove column.")
+```
 
 #### Link a Glossary Term to a Critical Data Element
 
+```python
+# Link a term to a critical data element
+relationship = client.link_term_to_critical_data_element(
+    cde_id="<your-critical-data-element-id>",
+    term_id="<your-term-id>",
+    description="This term provides business context for this CDE",
+    relationship_type="Related"
+)
+
+# Show the created relationship
+print(relationship)
+```
+
 #### Unlink a Glossary Term from a Critical Data Element
+
+```python
+# Unlink a term from a critical data element
+success = client.unlink_term_from_critical_data_element(
+    cde_id="<your-critical-data-element-id>",
+    term_id="<your-term-id>",
+    relationship_type="Related"
+)
+
+if success:
+    print("Term unlinked successfully.")
+else:
+    print("Failed to unlink term.")
+```
 
 ---
 
@@ -747,6 +884,145 @@ Data quality is the measurement of the quality of data in an organization, based
 
 > [!WARNING]
 > You cannot interact with Data Quality through this library yet. There is a lot of complexity in the API, data quality sub-features, and interpretation of the results. A pull request to add this functionality is welcome.
+
+## Advanced Features 🚀
+
+### Pagination Support
+
+All list operations support pagination for handling large datasets efficiently:
+
+```python
+from unifiedcatalogpy.models import PaginationOptions
+
+# Get paginated governance domains
+pagination = PaginationOptions(page_size=50)
+result = client.get_governance_domains_paginated(pagination)
+
+print(f"Retrieved {result.count} domains out of {result.total_count}")
+print(f"Has more pages: {result.has_more}")
+
+# Get next page
+if result.has_more:
+    next_pagination = PaginationOptions(
+        page_size=50, 
+        continuation_token=result.continuation_token
+    )
+    next_result = client.get_governance_domains_paginated(next_pagination)
+```
+
+### Automatic Iteration
+
+Use iterator methods to automatically handle pagination:
+
+```python
+# Iterate through all terms automatically
+for term in client.get_all_terms(governance_domain_id):
+    print(f"Processing term: {term['name']}")
+
+# Also available for:
+# - get_all_governance_domains()
+# - get_all_data_products(governance_domain_id)
+# - get_all_objectives(governance_domain_id)
+# - get_all_critical_data_elements(governance_domain_id)
+# - get_all_key_results(objective_id)
+```
+
+### Typed Response Models
+
+Get type-safe response objects with automatic date parsing:
+
+```python
+# Get typed governance domain
+domain = client.get_governance_domain_by_id_typed(domain_id)
+print(f"Domain: {domain.name}")
+print(f"Status: {domain.status}")  # EntityStatus enum
+print(f"Created: {domain.created_at}")  # datetime object
+
+# Get typed term
+term = client.get_term_by_id_typed(term_id)
+print(f"Term: {term.name}")
+print(f"Acronyms: {', '.join(term.acronyms)}")
+
+# Get all domains as typed objects
+domains = client.get_governance_domains_typed()
+for domain in domains:
+    print(f"{domain.name} ({domain.type})")
+```
+
+### Configuration Management
+
+Multiple ways to configure the client:
+
+```python
+# From configuration file (YAML or JSON)
+client = UnifiedCatalogClient.from_config_file("config.yaml")
+
+# From environment variables
+client = UnifiedCatalogClient.from_env()
+
+# From connection string
+client = UnifiedCatalogClient.from_connection_string(
+    "AccountId=xxx;TenantId=yyy;ClientId=zzz;ClientSecret=secret"
+)
+
+# Auto-discovery (tries file, then env, then defaults)
+client = UnifiedCatalogClient.from_default_config()
+```
+
+### Retry Logic and Circuit Breaker
+
+Built-in reliability features with configurable retry logic:
+
+```python
+from unifiedcatalogpy.config import UnifiedCatalogConfig
+
+config = UnifiedCatalogConfig(
+    account_id="your-account-id",
+    enable_retry=True,
+    max_retry_attempts=5,
+    retry_base_delay=2.0,
+    retry_max_delay=120.0,
+    enable_circuit_breaker=True,
+    request_timeout=60  # seconds
+)
+
+client = UnifiedCatalogClient.from_config(config)
+```
+
+### Generic Relationship Management
+
+Create relationships between any supported entity types:
+
+```python
+# Create relationship between any entities
+relationship = client.create_relationship(
+    entity_type="Term",  # or "DataProduct", "CriticalDataElement"
+    entity_id="<source-entity-id>",
+    relationship_type="Related",  # or "Synonym"
+    target_entity_id="<target-entity-id>",
+    description="Relationship description"
+)
+
+# Delete relationship
+success = client.delete_relationship(
+    entity_type="Term",
+    entity_id="<source-entity-id>",
+    target_entity_id="<target-entity-id>",
+    relationship_type="Related"
+)
+```
+
+### Context Manager Support
+
+Properly manage resources with context manager:
+
+```python
+with UnifiedCatalogClient.from_env() as client:
+    # Client session is automatically cleaned up
+    domains = client.get_governance_domains()
+    # ... do work ...
+# Session closed automatically
+```
 
 ## Limitations 🚧
 
