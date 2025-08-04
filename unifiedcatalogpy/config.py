@@ -35,6 +35,7 @@ class UnifiedCatalogConfig:
     retry_base_delay: float = 1.0
     retry_max_delay: float = 60.0
     enable_circuit_breaker: bool = True
+    request_timeout: int = 30  # Request timeout in seconds
     
     # Pagination settings
     default_page_size: int = 100

@@ -47,7 +47,8 @@ class UnifiedCatalogClient:
             base_url=base_url,
             credential=self.credential,
             retry_config=retry_config,
-            enable_circuit_breaker=self.config.enable_circuit_breaker
+            enable_circuit_breaker=self.config.enable_circuit_breaker,
+            timeout=self.config.request_timeout
         )
 
     @classmethod
@@ -292,6 +293,12 @@ class UnifiedCatalogClient:
         owners: List[dict] = [],
         status: GovernanceDomainStatus = "Draft",
     ):
+        self._validate_string_param("governance_domain_id", governance_domain_id)
+        self._validate_string_param("name", name, required=False)
+        self._validate_string_param("description", description, required=False)
+        if owners:
+            self._validate_owners(owners)
+        
         data = {
             "id": governance_domain_id,
             "name": name,
@@ -317,6 +324,7 @@ class UnifiedCatalogClient:
         :param domain_id: The ID of the governance domain to delete.
         :return: The response from the API.
         """
+        self._validate_string_param("domain_id", domain_id)
 
         try:
             response = self.api_client.delete(f"/businessdomains/{domain_id}")
@@ -373,6 +381,12 @@ class UnifiedCatalogClient:
         :param resources: Optional list of resources for the term. Each resource should be a dictionary with 'name' and 'url' keys.
         :return: The created term.
         """
+        self._validate_string_param("name", name)
+        self._validate_string_param("description", description)
+        self._validate_string_param("governance_domain_id", governance_domain_id)
+        self._validate_string_param("parent_id", parent_id, required=False)
+        if owners:
+            self._validate_owners(owners)
 
         data = {
             "name": name,

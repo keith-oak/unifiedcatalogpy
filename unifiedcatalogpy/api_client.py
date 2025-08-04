@@ -6,14 +6,23 @@ from unifiedcatalogpy.retry import retry_on_failure, RetryConfig, CircuitBreaker
 
 
 class ApiClient:
-    def __init__(self, base_url: str, credential: any, retry_config: Optional[RetryConfig] = None, enable_circuit_breaker: bool = True):
+    def __init__(self, base_url: str, credential: any, retry_config: Optional[RetryConfig] = None, enable_circuit_breaker: bool = True, timeout: int = 30):
         self.base_url = base_url
         self.credential = credential
         self.resource_scope = "73c2949e-da2d-457a-9607-fcc665198967/.default"
         self.retry_config = retry_config or RetryConfig()
+        self.timeout = timeout
         
         # Set up circuit breaker if enabled
         self.circuit_breaker = CircuitBreaker() if enable_circuit_breaker else None
+        
+        # Set up connection pool for better performance
+        self.session = requests.Session()
+        self.session.mount('https://', requests.adapters.HTTPAdapter(
+            pool_connections=10,
+            pool_maxsize=10,
+            max_retries=0  # We handle retries separately
+        ))
 
     def request(
         self, http_method: str, endpoint: str, params: Dict = None, data: Dict = None
@@ -40,12 +49,13 @@ class ApiClient:
         headers = {"Authorization": f"Bearer {token}"}
         
         try:
-            response = requests.request(
+            response = self.session.request(
                 method=http_method,
                 url=full_url,
                 headers=headers,
                 params=params,
                 json=data,
+                timeout=self.timeout,
             )
         except requests.exceptions.RequestException as e:
             raise APIError("HTTP request failed") from e
@@ -131,3 +141,20 @@ class ApiClient:
             continuation_token=continuation_token,
             has_more=has_more
         )
+    
+    def close(self):
+        """Close the session and clean up resources."""
+        if hasattr(self, 'session'):
+            self.session.close()
+    
+    def __enter__(self):
+        """Support context manager protocol."""
+        return self
+    
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """Clean up resources on exit."""
+        self.close()
+    
+    def __del__(self):
+        """Ensure resources are cleaned up on garbage collection."""
+        self.close()
