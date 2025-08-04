@@ -284,5 +284,4 @@ def create_sample_config_file(path: Union[str, Path] = "purview_config.yaml"):
     with open(path, 'w') as f:
         yaml.dump(sample_config, f, default_flow_style=False, indent=2)
     
-    print(f"Sample configuration file created at: {path}")
-    print("Please update the configuration with your actual values.")
+    # Configuration file created at: {path}

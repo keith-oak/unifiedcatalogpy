@@ -754,5 +754,5 @@ Data quality is the measurement of the quality of data in an organization, based
 - The library is not locked to a specific version of the Microsoft Purview API as an official Microsoft Purview Data Governance API for the Unified Catalog is not yet available. This means functionality may change unexpectedly. Do not rely on this library in production for this reason.
 - The library is maintained on a best-effort basis. It is not a full-time project and PRs are welcome.
 - Managing business concept policies and data quality is not yet supported.
-- No automated tests are included, functionality has been manually tested on a best-effort basis. PRs are welcome to add tests.
-- No typed return schema is provided as the API is not yet stable.
+- The library includes a comprehensive test suite in the `tests/` directory covering configuration, models, and retry logic.
+- Typed return schemas are available through the response models module for type-safe development.

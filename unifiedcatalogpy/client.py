@@ -8,7 +8,7 @@ from .response_models import (
     CriticalDataElement, Relationship
 )
 from .config import UnifiedCatalogConfig, ConfigManager
-from .exceptions import ValidationError
+from .exceptions import ValidationError, APIError, RelationshipError
 
 
 class UnifiedCatalogClient:
@@ -308,7 +308,7 @@ class UnifiedCatalogClient:
             )
             return response.data
         except Exception as e:
-            raise Exception(e)
+            raise APIError(f"Failed to update governance domain: {str(e)}")
 
     def delete_governance_domain(self, domain_id: str):
         """
@@ -324,7 +324,7 @@ class UnifiedCatalogClient:
                 return False
             return True
         except Exception as e:
-            raise Exception(e)
+            raise APIError(f"Failed to delete governance domain: {str(e)}")
 
     TermStatus = Literal["Draft", "Published", "Expired"]
 
@@ -448,7 +448,7 @@ class UnifiedCatalogClient:
                 return False
             return True
         except Exception as e:
-            raise Exception(e)
+            raise APIError(f"Failed to delete term: {str(e)}")
 
     def get_term_by_id(self, term_id: str):
         """
@@ -619,7 +619,7 @@ class UnifiedCatalogClient:
                 return False
             return True
         except Exception as e:
-            raise Exception(e)
+            raise RelationshipError(f"Failed to delete term relationship: {str(e)}")
 
     # Data Products
     DataProductStatus = Literal["Draft", "Published", "Expired"]
@@ -793,7 +793,7 @@ class UnifiedCatalogClient:
                 return False
             return True
         except Exception as e:
-            raise Exception(e)
+            raise APIError(f"Failed to delete data product: {str(e)}")
 
     def link_term_to_data_product(
         self,
@@ -894,7 +894,7 @@ class UnifiedCatalogClient:
                 return False
             return True
         except Exception as e:
-            raise Exception(e)
+            raise RelationshipError(f"Failed to delete term relationship: {str(e)}")
 
     def link_critical_data_element_to_data_product(
         self,
@@ -1063,7 +1063,7 @@ class UnifiedCatalogClient:
                 return False
             return True
         except Exception as e:
-            raise Exception(e)
+            raise APIError(f"Failed to delete objective: {str(e)}")
 
     # Critical Data Elements
     CriticalDataElementStatus = Literal["Draft", "Published", "Expired"]
@@ -1195,7 +1195,7 @@ class UnifiedCatalogClient:
                 return False
             return True
         except Exception as e:
-            raise Exception(e)
+            raise APIError(f"Failed to delete critical data element: {str(e)}")
 
     def add_column_to_critical_data_element(
         self,
@@ -1237,7 +1237,7 @@ class UnifiedCatalogClient:
                 return False
             return True
         except Exception as e:
-            raise Exception(e)
+            raise APIError(f"Failed to remove column from critical data element: {str(e)}")
 
     def link_term_to_critical_data_element(
         self,
@@ -1392,7 +1392,7 @@ class UnifiedCatalogClient:
                 return False
             return True
         except Exception as e:
-            raise Exception(e)
+            raise APIError(f"Failed to delete key result: {str(e)}")
 
     def get_key_results(self, objective_id: str):
         """
@@ -1420,8 +1420,7 @@ class UnifiedCatalogClient:
         Get a key result by its ID.
 
         :param key_result_id: The ID of the key result.
-        :param
-        objective_id: The ID of the objective.
+        :param objective_id: The ID of the objective.
         :return: The key result data.
         """
         response = self.api_client.get(
