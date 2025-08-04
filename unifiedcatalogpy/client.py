@@ -1,6 +1,13 @@
-from typing import List, Literal
+from typing import List, Literal, Optional, Iterator, Dict, Union
+from pathlib import Path
 from .utils import format_base_url
 from .api_client import ApiClient
+from .models import PaginatedResult, PaginationOptions
+from .response_models import (
+    GovernanceDomain, Term, DataProduct, Objective, KeyResult, 
+    CriticalDataElement, Relationship
+)
+from .config import UnifiedCatalogConfig, ConfigManager
 from .exceptions import ValidationError
 
 
@@ -9,21 +16,91 @@ class UnifiedCatalogClient:
     Microsoft Purview Unified Catalog client for interacting with the Unified Catalog API.
     """
 
-    def __init__(self, account_id: str, credential: any):
+    def __init__(self, account_id: str = None, credential: any = None, config: UnifiedCatalogConfig = None):
         """
         Initialize the Microsoft Purview Unified Catalog client.
 
         :param account_id: The guid of the Microsoft Purview account.
         :param credential: The azure.identity credential used to authenticate requests.
+        :param config: Configuration object. If provided, account_id and credential are ignored.
         """
-        if not account_id or not isinstance(account_id, str):
-            raise ValidationError("account_id must be a non-empty string")
-        if not credential:
-            raise ValidationError("credential must be provided")
+        if config:
+            self.config = config
+            self.account_id = config.account_id
+            self.credential = config.get_credential()
+        else:
+            # Legacy initialization
+            if not account_id or not isinstance(account_id, str):
+                raise ValidationError("account_id must be a non-empty string")
+            if not credential:
+                raise ValidationError("credential must be provided")
             
-        self.account_id = account_id
-        self.credential = credential
-        self.api_client = ApiClient(format_base_url(account_id), credential)
+            self.account_id = account_id
+            self.credential = credential
+            self.config = UnifiedCatalogConfig(account_id=account_id)
+        
+        # Initialize API client with configuration
+        base_url = self.config.base_url or format_base_url(self.account_id)
+        retry_config = self.config.get_retry_config() if self.config.enable_retry else None
+        
+        self.api_client = ApiClient(
+            base_url=base_url,
+            credential=self.credential,
+            retry_config=retry_config,
+            enable_circuit_breaker=self.config.enable_circuit_breaker
+        )
+
+    @classmethod
+    def from_config(cls, config: UnifiedCatalogConfig) -> 'UnifiedCatalogClient':
+        """
+        Create client from configuration object.
+        
+        :param config: Configuration object
+        :return: UnifiedCatalogClient instance
+        """
+        return cls(config=config)
+
+    @classmethod
+    def from_config_file(cls, config_path: Union[str, Path]) -> 'UnifiedCatalogClient':
+        """
+        Create client from configuration file.
+        
+        :param config_path: Path to configuration file
+        :return: UnifiedCatalogClient instance
+        """
+        config = ConfigManager.from_file(config_path)
+        return cls.from_config(config)
+
+    @classmethod
+    def from_env(cls) -> 'UnifiedCatalogClient':
+        """
+        Create client from environment variables.
+        
+        :return: UnifiedCatalogClient instance
+        """
+        config = ConfigManager.from_env()
+        return cls.from_config(config)
+
+    @classmethod
+    def from_connection_string(cls, connection_string: str) -> 'UnifiedCatalogClient':
+        """
+        Create client from connection string.
+        
+        :param connection_string: Connection string with account and auth details
+        :return: UnifiedCatalogClient instance
+        """
+        config = ConfigManager.from_connection_string(connection_string)
+        return cls.from_config(config)
+
+    @classmethod
+    def from_default_config(cls) -> 'UnifiedCatalogClient':
+        """
+        Create client using default configuration strategy.
+        
+        :return: UnifiedCatalogClient instance
+        """
+        config = ConfigManager.load_default()
+        return cls.from_config(config)
 
     def _validate_string_param(self, param_name: str, param_value: str, required: bool = True):
         """Validate string parameters."""
@@ -42,15 +119,100 @@ class UnifiedCatalogClient:
             if "id" not in owner:
                 raise ValidationError(f"owner at index {i} must have an 'id' field")
 
+    def _iterate_all_pages(self, get_page_func, *args, **kwargs) -> Iterator[Dict]:
+        """
+        Helper method to iterate through all pages of a paginated API.
+        
+        :param get_page_func: Function that returns a PaginatedResult
+        :param args: Arguments to pass to the function
+        :param kwargs: Keyword arguments to pass to the function
+        :yields: Individual items from all pages
+        """
+        pagination = PaginationOptions()
+        
+        while True:
+            # Remove 'pagination' from kwargs if it exists, we control it
+            filtered_kwargs = {k: v for k, v in kwargs.items() if k != 'pagination'}
+            result = get_page_func(*args, pagination=pagination, **filtered_kwargs)
+            
+            for item in result.items:
+                yield item
+            
+            if not result.has_more or not result.continuation_token:
+                break
+                
+            pagination.continuation_token = result.continuation_token
+
+    def get_all_governance_domains(self) -> Iterator[Dict]:
+        """
+        Get all governance domains, iterating through all pages automatically.
+        
+        :yields: Individual governance domain dictionaries
+        """
+        return self._iterate_all_pages(self.get_governance_domains_paginated)
+
+    def get_all_terms(self, governance_domain_id: str) -> Iterator[Dict]:
+        """
+        Get all terms in a domain, iterating through all pages automatically.
+        
+        :param governance_domain_id: The ID of the governance domain
+        :yields: Individual term dictionaries
+        """
+        return self._iterate_all_pages(self.get_terms_paginated, governance_domain_id)
+
+    def get_all_data_products(self, governance_domain_id: str) -> Iterator[Dict]:
+        """
+        Get all data products in a domain, iterating through all pages automatically.
+        
+        :param governance_domain_id: The ID of the governance domain
+        :yields: Individual data product dictionaries
+        """
+        return self._iterate_all_pages(self.get_data_products_paginated, governance_domain_id)
+
+    def get_all_objectives(self, governance_domain_id: str) -> Iterator[Dict]:
+        """
+        Get all objectives in a domain, iterating through all pages automatically.
+        
+        :param governance_domain_id: The ID of the governance domain
+        :yields: Individual objective dictionaries
+        """
+        return self._iterate_all_pages(self.get_objectives_paginated, governance_domain_id)
+
+    def get_all_critical_data_elements(self, governance_domain_id: str) -> Iterator[Dict]:
+        """
+        Get all critical data elements in a domain, iterating through all pages automatically.
+        
+        :param governance_domain_id: The ID of the governance domain
+        :yields: Individual critical data element dictionaries
+        """
+        return self._iterate_all_pages(self.get_critical_data_elements_paginated, governance_domain_id)
+
+    def get_all_key_results(self, objective_id: str) -> Iterator[Dict]:
+        """
+        Get all key results for an objective, iterating through all pages automatically.
+        
+        :param objective_id: The ID of the objective
+        :yields: Individual key result dictionaries
+        """
+        return self._iterate_all_pages(self.get_key_results_paginated, objective_id)
+
     def get_governance_domains(self):
         """
         Get the list of governance domains.
 
         :return: List of governance domains.
         """
-
         response = self.api_client.get("/businessdomains")
         return response.data["value"]
+
+    def get_governance_domains_paginated(self, pagination: Optional[PaginationOptions] = None) -> PaginatedResult:
+        """
+        Get governance domains with pagination support.
+
+        :param pagination: Pagination options (page_size, continuation_token)
+        :return: PaginatedResult containing domains and pagination metadata
+        """
+        return self.api_client.get_paginated("/businessdomains", pagination)
 
     def get_governance_domain_by_id(self, domain_id: str):
         """
@@ -61,6 +223,26 @@ class UnifiedCatalogClient:
         """
         response = self.api_client.get(f"/businessdomains/{domain_id}")
         return response.data
+
+    def get_governance_domain_by_id_typed(self, domain_id: str) -> GovernanceDomain:
+        """
+        Get a governance domain by its ID, returning a typed model.
+
+        :param domain_id: The ID of the governance domain.
+        :return: GovernanceDomain model instance.
+        """
+        self._validate_string_param("domain_id", domain_id)
+        data = self.get_governance_domain_by_id(domain_id)
+        return GovernanceDomain.from_dict(data)
+
+    def get_governance_domains_typed(self) -> List[GovernanceDomain]:
+        """
+        Get governance domains as typed models.
+
+        :return: List of GovernanceDomain model instances.
+        """
+        domains_data = self.get_governance_domains()
+        return [GovernanceDomain.from_dict(domain) for domain in domains_data]
 
     GovernanceDomainType = Literal[
         "FunctionalUnit", "LineOfBusiness", "DataDomain", "Regulatory", "Project"
@@ -154,6 +336,18 @@ class UnifiedCatalogClient:
         """
         response = self.api_client.get(f"/terms?domainId={governance_domain_id}")
         return response.data["value"]
+
+    def get_terms_paginated(self, governance_domain_id: str, pagination: Optional[PaginationOptions] = None) -> PaginatedResult:
+        """
+        Get terms with pagination support.
+
+        :param governance_domain_id: The ID of the governance domain
+        :param pagination: Pagination options (page_size, continuation_token)
+        :return: PaginatedResult containing terms and pagination metadata
+        """
+        self._validate_string_param("governance_domain_id", governance_domain_id)
+        params = {"domainId": governance_domain_id}
+        return self.api_client.get_paginated("/terms", pagination, params)
 
     def create_term(
         self,
@@ -265,6 +459,27 @@ class UnifiedCatalogClient:
         """
         response = self.api_client.get(f"/terms/{term_id}")
         return response.data
+
+    def get_term_by_id_typed(self, term_id: str) -> Term:
+        """
+        Get a term by its ID, returning a typed model.
+
+        :param term_id: The ID of the term.
+        :return: Term model instance.
+        """
+        self._validate_string_param("term_id", term_id)
+        data = self.get_term_by_id(term_id)
+        return Term.from_dict(data)
+
+    def get_terms_typed(self, governance_domain_id: str) -> List[Term]:
+        """
+        Get terms as typed models.
+
+        :param governance_domain_id: The ID of the governance domain.
+        :return: List of Term model instances.
+        """
+        terms_data = self.get_terms(governance_domain_id)
+        return [Term.from_dict(term) for term in terms_data]
 
     RelationshipType = Literal["Synonym", "Related"]
     RelationshipEntityType = Literal[
@@ -426,9 +641,20 @@ class UnifiedCatalogClient:
         :param governance_domain_id: The ID of the governance domain."
         :return: List of data products.
         """
-
         response = self.api_client.get(f"/dataproducts?domainId={governance_domain_id}")
         return response.data["value"]
+
+    def get_data_products_paginated(self, governance_domain_id: str, pagination: Optional[PaginationOptions] = None) -> PaginatedResult:
+        """
+        Get data products with pagination support.
+
+        :param governance_domain_id: The ID of the governance domain
+        :param pagination: Pagination options (page_size, continuation_token)
+        :return: PaginatedResult containing data products and pagination metadata
+        """
+        self._validate_string_param("governance_domain_id", governance_domain_id)
+        params = {"domainId": governance_domain_id}
+        return self.api_client.get_paginated("/dataproducts", pagination, params)
 
     def get_data_product_by_id(self, data_product_id: str):
         """
@@ -759,9 +985,20 @@ class UnifiedCatalogClient:
         :param governance_domain_id: The ID of the governance domain.
         :return: List of objectives.
         """
-
         response = self.api_client.get(f"/objectives?domainId={governance_domain_id}")
         return response.data["value"]
+
+    def get_objectives_paginated(self, governance_domain_id: str, pagination: Optional[PaginationOptions] = None) -> PaginatedResult:
+        """
+        Get objectives with pagination support.
+
+        :param governance_domain_id: The ID of the governance domain
+        :param pagination: Pagination options (page_size, continuation_token)
+        :return: PaginatedResult containing objectives and pagination metadata
+        """
+        self._validate_string_param("governance_domain_id", governance_domain_id)
+        params = {"domainId": governance_domain_id}
+        return self.api_client.get_paginated("/objectives", pagination, params)
 
     def get_objective_by_id(self, objective_id: str):
         """
@@ -879,6 +1116,18 @@ class UnifiedCatalogClient:
             f"/criticalDataElements?domainId={governance_domain_id}"
         )
         return response.data["value"]
+
+    def get_critical_data_elements_paginated(self, governance_domain_id: str, pagination: Optional[PaginationOptions] = None) -> PaginatedResult:
+        """
+        Get critical data elements with pagination support.
+
+        :param governance_domain_id: The ID of the governance domain
+        :param pagination: Pagination options (page_size, continuation_token)
+        :return: PaginatedResult containing critical data elements and pagination metadata
+        """
+        self._validate_string_param("governance_domain_id", governance_domain_id)
+        params = {"domainId": governance_domain_id}
+        return self.api_client.get_paginated("/criticalDataElements", pagination, params)
 
     def get_critical_data_element_by_id(self, cde_id: str):
         """
@@ -1152,9 +1401,19 @@ class UnifiedCatalogClient:
         :param objective_id: The ID of the objective.
         :return: List of key results.
         """
-
         response = self.api_client.get(f"/objectives/{objective_id}/keyResults")
         return response.data["value"]
+
+    def get_key_results_paginated(self, objective_id: str, pagination: Optional[PaginationOptions] = None) -> PaginatedResult:
+        """
+        Get key results with pagination support.
+
+        :param objective_id: The ID of the objective
+        :param pagination: Pagination options (page_size, continuation_token)
+        :return: PaginatedResult containing key results and pagination metadata
+        """
+        self._validate_string_param("objective_id", objective_id)
+        return self.api_client.get_paginated(f"/objectives/{objective_id}/keyResults", pagination)
 
     def get_key_result_by_id(self, key_result_id: str, objective_id: str):
         """
