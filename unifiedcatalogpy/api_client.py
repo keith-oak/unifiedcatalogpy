@@ -1,6 +1,7 @@
 import requests
 from typing import Dict
 from unifiedcatalogpy.models import Result
+from unifiedcatalogpy.exceptions import APIError, AuthenticationError
 
 
 class ApiClient:
@@ -13,8 +14,14 @@ class ApiClient:
         self, http_method: str, endpoint: str, params: Dict = None, data: Dict = None
     ) -> Result:
         full_url = self.base_url + endpoint
-        token = self.credential.get_token(self.resource_scope).token
+        
+        try:
+            token = self.credential.get_token(self.resource_scope).token
+        except Exception as e:
+            raise AuthenticationError("Failed to obtain authentication token") from e
+        
         headers = {"Authorization": f"Bearer {token}"}
+        
         try:
             response = requests.request(
                 method=http_method,
@@ -24,7 +31,7 @@ class ApiClient:
                 json=data,
             )
         except requests.exceptions.RequestException as e:
-            raise Exception("Request failed") from e
+            raise APIError("HTTP request failed") from e
 
         if response.status_code == 204:
             return Result(response.status_code, message=response.reason, data=[])
@@ -36,7 +43,16 @@ class ApiClient:
 
         if 299 >= response.status_code >= 200:
             return Result(response.status_code, message=response.reason, data=data_out)
-        raise Exception(f"{response.status_code}: {response.reason}")
+        
+        # Handle specific error cases
+        if response.status_code == 401:
+            raise AuthenticationError(f"Authentication failed: {response.reason}")
+        elif response.status_code == 403:
+            raise APIError(f"Permission denied: {response.reason}", response.status_code, data_out)
+        elif response.status_code == 404:
+            raise APIError(f"Resource not found: {response.reason}", response.status_code, data_out)
+        else:
+            raise APIError(f"API request failed: {response.status_code} {response.reason}", response.status_code, data_out)
 
     def get(self, endpoint: str, params: Dict = None) -> Result:
         return self.request(http_method="GET", endpoint=endpoint, params=params)

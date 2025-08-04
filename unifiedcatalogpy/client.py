@@ -1,6 +1,7 @@
 from typing import List, Literal
 from .utils import format_base_url
 from .api_client import ApiClient
+from .exceptions import ValidationError
 
 
 class UnifiedCatalogClient:
@@ -15,9 +16,31 @@ class UnifiedCatalogClient:
         :param account_id: The guid of the Microsoft Purview account.
         :param credential: The azure.identity credential used to authenticate requests.
         """
+        if not account_id or not isinstance(account_id, str):
+            raise ValidationError("account_id must be a non-empty string")
+        if not credential:
+            raise ValidationError("credential must be provided")
+            
         self.account_id = account_id
         self.credential = credential
         self.api_client = ApiClient(format_base_url(account_id), credential)
+
+    def _validate_string_param(self, param_name: str, param_value: str, required: bool = True):
+        """Validate string parameters."""
+        if required and not param_value:
+            raise ValidationError(f"{param_name} is required and cannot be empty")
+        if param_value is not None and not isinstance(param_value, str):
+            raise ValidationError(f"{param_name} must be a string")
+
+    def _validate_owners(self, owners: List[dict]):
+        """Validate owners list structure."""
+        if not isinstance(owners, list):
+            raise ValidationError("owners must be a list")
+        for i, owner in enumerate(owners):
+            if not isinstance(owner, dict):
+                raise ValidationError(f"owner at index {i} must be a dictionary")
+            if "id" not in owner:
+                raise ValidationError(f"owner at index {i} must have an 'id' field")
 
     def get_governance_domains(self):
         """
@@ -63,6 +86,9 @@ class UnifiedCatalogClient:
         :param status: Optional status of the governance domain.
         :return: The created governance domain.
         """
+        self._validate_string_param("name", name)
+        self._validate_string_param("description", description)
+        self._validate_string_param("parent_id", parent_id, required=False)
 
         data = {
             "name": name,
@@ -167,7 +193,6 @@ class UnifiedCatalogClient:
             ],
             "status": status,
         }
-        print(data)
         response = self.api_client.post("/terms", data=data)
         return response.data
 
@@ -323,56 +348,63 @@ class UnifiedCatalogClient:
             return False
         return True
 
-    # def create_term_relationship(
-    #     self,
-    #     term_id: str,
-    #     relationship_type: RelationshipType,
-    #     entity_id: str,
-    #     description: str = "",
-    # ):
-    #     """
-    #     Create a relationship between two terms.
+    def create_term_relationship(
+        self,
+        term_id: str,
+        relationship_type: RelationshipType,
+        entity_id: str,
+        description: str = "",
+    ):
+        """
+        Create a relationship between two terms.
 
-    #     :param term_id: The ID of the term to create the relationship for.
-    #     :param relationship_type: The type of the relationship (Synonym or Related).
-    #     :param entity_id: The ID of the target entity to create the relationship with.
-    #     :param description: Optional description of the relationship.
-    #     :return: The created relationship.
-    #     """
+        :param term_id: The ID of the term to create the relationship for.
+        :param relationship_type: The type of the relationship (Synonym or Related).
+        :param entity_id: The ID of the target entity to create the relationship with.
+        :param description: Optional description of the relationship.
+        :return: The created relationship.
+        """
 
-    #     data = {
-    #         "description": description,
-    #         "entityId": entity_id,
-    #         "relationshipType": relationship_type,
-    #     }
-    #     response = self.api_client.post(f"/terms/{term_id}/relationships", data=data)
-    #     return response.data
+        data = {
+            "description": description,
+            "entityId": entity_id,
+            "relationshipType": relationship_type,
+        }
+        params = {
+            "entityType": "Term",
+        }
+        response = self.api_client.post(f"/terms/{term_id}/relationships", data=data, params=params)
+        return response.data
 
-    # def delete_term_relationship(
-    #     self,
-    #     term_id: str,
-    #     entity_id: str,
-    #     entity_type: RelationshipEntityType,
-    #     relationship_type: RelationshipType,
-    # ):
-    #     """
-    #     Delete a relationship between two terms.
+    def delete_term_relationship(
+        self,
+        term_id: str,
+        entity_id: str,
+        entity_type: RelationshipEntityType,
+        relationship_type: RelationshipType,
+    ):
+        """
+        Delete a relationship between two terms.
 
-    #     :param term_id: The ID of the term to delete the relationship from.
-    #     :param entity_id: The ID of the related entity.
-    #     :param relationship_type: The type of the relationship (Synonym or Related).
-    #     :return: The response from the API.
-    #     """
+        :param term_id: The ID of the term to delete the relationship from.
+        :param entity_id: The ID of the related entity.
+        :param entity_type: The type of the related entity.
+        :param relationship_type: The type of the relationship (Synonym or Related).
+        :return: The response from the API.
+        """
 
-    #     try:
-    #         response = self.api_client.delete(
-    #             f"/terms/{term_id}/relationships?entityId={entity_id}&entityType={entity_type}&relationshipType={relationship_type}"
-    #         )
-    #         if not response.status_code == 204:
-    #             return False
-    #         return True
-    #     except Exception as e:
-    #         raise Exception(e)
+        params = {
+            "entityId": entity_id,
+            "entityType": entity_type,
+            "relationshipType": relationship_type,
+        }
+        try:
+            response = self.api_client.delete(f"/terms/{term_id}/relationships", params=params)
+            if response.status_code != 204:
+                return False
+            return True
+        except Exception as e:
+            raise Exception(e)
 
     # Data Products
     DataProductStatus = Literal["Draft", "Published", "Expired"]
@@ -537,10 +569,151 @@ class UnifiedCatalogClient:
         except Exception as e:
             raise Exception(e)
 
-    # TODO: Data Product Term Relationship (Create, Delete)
-    # Create: dataproducts/<data-product-id>/relationships?entityType=Term
-    # {"entityId":"94e22736-067d-4283-9806-1efdbac07297","description":"Test Term Description","relationshipType":"Related"}
-    # Delete: dataproducts/58ddd299-5434-493b-956f-01c76171621f/relationships?entityType=Term&entityId=4939d006-fff0-4bad-9b03-53700b48b31b&relationshipType=Related
+    def link_term_to_data_product(
+        self,
+        data_product_id: str,
+        term_id: str,
+        description: str = "",
+        relationship_type: RelationshipType = "Related",
+    ):
+        """
+        Link a glossary term to a data product.
+
+        :param data_product_id: The ID of the data product.
+        :param term_id: The ID of the term to link.
+        :param description: Optional description of the relationship.
+        :param relationship_type: The type of the relationship (default: "Related").
+        :return: The created relationship.
+        """
+        return self.create_relationship(
+            entity_type="DataProduct",
+            entity_id=data_product_id,
+            relationship_type=relationship_type,
+            target_entity_id=term_id,
+            description=description,
+        )
+
+    def unlink_term_from_data_product(
+        self,
+        data_product_id: str,
+        term_id: str,
+        relationship_type: RelationshipType = "Related",
+    ):
+        """
+        Unlink a glossary term from a data product.
+
+        :param data_product_id: The ID of the data product.
+        :param term_id: The ID of the term to unlink.
+        :param relationship_type: The type of the relationship (default: "Related").
+        :return: True if successful, False otherwise.
+        """
+        return self.delete_relationship(
+            entity_type="DataProduct",
+            entity_id=data_product_id,
+            target_entity_id=term_id,
+            relationship_type=relationship_type,
+        )
+
+    def link_objective_to_data_product(
+        self,
+        data_product_id: str,
+        objective_id: str,
+        description: str = "",
+        relationship_type: RelationshipType = "Related",
+    ):
+        """
+        Link an objective to a data product.
+
+        :param data_product_id: The ID of the data product.
+        :param objective_id: The ID of the objective to link.
+        :param description: Optional description of the relationship.
+        :param relationship_type: The type of the relationship (default: "Related").
+        :return: The created relationship.
+        """
+        data = {
+            "description": description,
+            "entityId": objective_id,
+            "relationshipType": relationship_type,
+        }
+        params = {"entityType": "Objective"}
+        response = self.api_client.post(
+            f"/dataproducts/{data_product_id}/relationships", data=data, params=params
+        )
+        return response.data
+
+    def unlink_objective_from_data_product(
+        self,
+        data_product_id: str,
+        objective_id: str,
+        relationship_type: RelationshipType = "Related",
+    ):
+        """
+        Unlink an objective from a data product.
+
+        :param data_product_id: The ID of the data product.
+        :param objective_id: The ID of the objective to unlink.
+        :param relationship_type: The type of the relationship (default: "Related").
+        :return: True if successful, False otherwise.
+        """
+        params = {
+            "entityId": objective_id,
+            "entityType": "Objective",
+            "relationshipType": relationship_type,
+        }
+        try:
+            response = self.api_client.delete(
+                f"/dataproducts/{data_product_id}/relationships", params=params
+            )
+            if response.status_code != 204:
+                return False
+            return True
+        except Exception as e:
+            raise Exception(e)
+
+    def link_critical_data_element_to_data_product(
+        self,
+        data_product_id: str,
+        cde_id: str,
+        description: str = "",
+        relationship_type: RelationshipType = "Related",
+    ):
+        """
+        Link a critical data element to a data product.
+
+        :param data_product_id: The ID of the data product.
+        :param cde_id: The ID of the critical data element to link.
+        :param description: Optional description of the relationship.
+        :param relationship_type: The type of the relationship (default: "Related").
+        :return: The created relationship.
+        """
+        return self.create_relationship(
+            entity_type="DataProduct",
+            entity_id=data_product_id,
+            relationship_type=relationship_type,
+            target_entity_id=cde_id,
+            description=description,
+        )
+
+    def unlink_critical_data_element_from_data_product(
+        self,
+        data_product_id: str,
+        cde_id: str,
+        relationship_type: RelationshipType = "Related",
+    ):
+        """
+        Unlink a critical data element from a data product.
+
+        :param data_product_id: The ID of the data product.
+        :param cde_id: The ID of the critical data element to unlink.
+        :param relationship_type: The type of the relationship (default: "Related").
+        :return: True if successful, False otherwise.
+        """
+        return self.delete_relationship(
+            entity_type="DataProduct",
+            entity_id=data_product_id,
+            target_entity_id=cde_id,
+            relationship_type=relationship_type,
+        )
 
     # Objectives
     ObjectiveStatus = Literal["Draft", "Published", "Closed"]
@@ -775,6 +948,93 @@ class UnifiedCatalogClient:
         except Exception as e:
             raise Exception(e)
 
+    def add_column_to_critical_data_element(
+        self,
+        cde_id: str,
+        column_qualified_name: str,
+        column_display_name: str = None,
+    ):
+        """
+        Add a column to a critical data element.
+
+        :param cde_id: The ID of the critical data element.
+        :param column_qualified_name: The qualified name of the column to add.
+        :param column_display_name: Optional display name for the column.
+        :return: The response from the API.
+        """
+        data = {
+            "qualifiedName": column_qualified_name,
+            "displayName": column_display_name or column_qualified_name,
+        }
+        response = self.api_client.post(f"/criticalDataElements/{cde_id}/columns", data=data)
+        return response.data
+
+    def remove_column_from_critical_data_element(
+        self,
+        cde_id: str,
+        column_qualified_name: str,
+    ):
+        """
+        Remove a column from a critical data element.
+
+        :param cde_id: The ID of the critical data element.
+        :param column_qualified_name: The qualified name of the column to remove.
+        :return: True if successful, False otherwise.
+        """
+        params = {"qualifiedName": column_qualified_name}
+        try:
+            response = self.api_client.delete(f"/criticalDataElements/{cde_id}/columns", params=params)
+            if response.status_code != 204:
+                return False
+            return True
+        except Exception as e:
+            raise Exception(e)
+
+    def link_term_to_critical_data_element(
+        self,
+        cde_id: str,
+        term_id: str,
+        description: str = "",
+        relationship_type: RelationshipType = "Related",
+    ):
+        """
+        Link a glossary term to a critical data element.
+
+        :param cde_id: The ID of the critical data element.
+        :param term_id: The ID of the term to link.
+        :param description: Optional description of the relationship.
+        :param relationship_type: The type of the relationship (default: "Related").
+        :return: The created relationship.
+        """
+        return self.create_relationship(
+            entity_type="CriticalDataElement",
+            entity_id=cde_id,
+            relationship_type=relationship_type,
+            target_entity_id=term_id,
+            description=description,
+        )
+
+    def unlink_term_from_critical_data_element(
+        self,
+        cde_id: str,
+        term_id: str,
+        relationship_type: RelationshipType = "Related",
+    ):
+        """
+        Unlink a glossary term from a critical data element.
+
+        :param cde_id: The ID of the critical data element.
+        :param term_id: The ID of the term to unlink.
+        :param relationship_type: The type of the relationship (default: "Related").
+        :return: True if successful, False otherwise.
+        """
+        return self.delete_relationship(
+            entity_type="CriticalDataElement",
+            entity_id=cde_id,
+            target_entity_id=term_id,
+            relationship_type=relationship_type,
+        )
+
     # Key Results
     KeyResultStatus = Literal["Behind", "OnTrack", "AtRisk"]
 
@@ -803,7 +1063,7 @@ class UnifiedCatalogClient:
         """
 
         if progress < 0 or goal < 0 or max <= 0:
-            raise ValueError(
+            raise ValidationError(
                 "Progress and goal must be zero (0) or positive integers, max must be a positive integer."
             )
 
@@ -846,8 +1106,8 @@ class UnifiedCatalogClient:
         :raises ValueError: If progress, goal, or max are negative integers.
         """
 
-        if progress < 0 or goal < 0 or max <= 0:
-            raise ValueError(
+        if (progress is not None and progress < 0) or (goal is not None and goal < 0) or (max is not None and max <= 0):
+            raise ValidationError(
                 "Progress and goal must be zero (0) or positive integers, max must be a positive integer."
             )
 
