@@ -1,11 +1,14 @@
+"""Microsoft Purview Unified Catalog client module."""
 from typing import List, Literal
-from .utils import format_base_url
+
 from .api_client import ApiClient
+from .utils import format_base_url
 
 
 class UnifiedCatalogClient:
     """
-    Microsoft Purview Unified Catalog client for interacting with the Unified Catalog API.
+    Microsoft Purview Unified Catalog client for interacting with the
+    Unified Catalog API.
     """
 
     def __init__(self, account_id: str, credential: any):
@@ -13,7 +16,8 @@ class UnifiedCatalogClient:
         Initialize the Microsoft Purview Unified Catalog client.
 
         :param account_id: The guid of the Microsoft Purview account.
-        :param credential: The azure.identity credential used to authenticate requests.
+        :param credential: The azure.identity credential used to authenticate
+            requests.
         """
         self.account_id = account_id
         self.credential = credential
@@ -27,7 +31,14 @@ class UnifiedCatalogClient:
         """
 
         response = self.api_client.get("/businessdomains")
-        return response.data["value"]
+        if isinstance(response.data, dict) and "value" in response.data:
+            if isinstance(response.data, dict) and "value" in response.data:
+                value = response.data.get("value")
+                if isinstance(value, list):
+                    return value
+                return value
+            return response.data
+        return response.data
 
     def get_governance_domain_by_id(self, domain_id: str):
         """
@@ -40,7 +51,8 @@ class UnifiedCatalogClient:
         return response.data
 
     GovernanceDomainType = Literal[
-        "FunctionalUnit", "LineOfBusiness", "DataDomain", "Regulatory", "Project"
+        "FunctionalUnit", "LineOfBusiness", "DataDomain", "Regulatory",
+        "Project"
     ]
 
     GovernanceDomainStatus = Literal["Draft", "Published"]
@@ -49,7 +61,7 @@ class UnifiedCatalogClient:
         self,
         name: str,
         description: str,
-        type: GovernanceDomainType,
+        domain_type: GovernanceDomainType,
         parent_id: str = None,
         status: GovernanceDomainStatus = "Draft",
     ):
@@ -67,7 +79,7 @@ class UnifiedCatalogClient:
         data = {
             "name": name,
             "description": description,
-            "type": type,
+            "type": domain_type,
             "parent_id": parent_id,
             "status": status,
         }
@@ -79,18 +91,23 @@ class UnifiedCatalogClient:
         governance_domain_id: str,
         name: str = None,
         description: str = None,
-        type: str = None,
+        domain_type: str = None,
         parent_id: str = None,
-        owners: List[dict] = [],
+        owners: List[dict] = None,
         status: GovernanceDomainStatus = "Draft",
     ):
         data = {
             "id": governance_domain_id,
             "name": name,
             "description": description,
-            "type": type,
+            "type": domain_type,
             "parent_id": parent_id,
-            "contacts": {"owner": [{"id": owner["id"]} for owner in owners]},
+            "contacts": {
+                "owner": [
+                    {"id": owner["id"]}
+                    for owner in (owners or [])
+                ]
+            },
             "status": status,
         }
 
@@ -100,7 +117,7 @@ class UnifiedCatalogClient:
             )
             return response.data
         except Exception as e:
-            raise Exception(e)
+            raise RuntimeError("Failed to update governance domain") from e
 
     def delete_governance_domain(self, domain_id: str):
         """
@@ -116,7 +133,7 @@ class UnifiedCatalogClient:
                 return False
             return True
         except Exception as e:
-            raise Exception(e)
+            raise RuntimeError("Failed to delete governance domain") from e
 
     TermStatus = Literal["Draft", "Published", "Expired"]
 
@@ -127,7 +144,9 @@ class UnifiedCatalogClient:
         :return: List of terms.
         """
         response = self.api_client.get(f"/terms?domainId={governance_domain_id}")
-        return response.data["value"]
+        if isinstance(response.data, dict) and "value" in response.data:
+            return response.data["value"]
+        return response.data
 
     def create_term(
         self,
@@ -135,9 +154,9 @@ class UnifiedCatalogClient:
         description: str,
         governance_domain_id: str,
         parent_id: str = None,
-        owners: List[dict] = [],
-        acronyms: List[str] = [],
-        resources: List[dict] = [],
+        owners: List[dict] = None,
+        acronyms: List[str] = None,
+        resources: List[dict] = None,
         status: TermStatus = "Draft",
     ):
         """
@@ -149,8 +168,10 @@ class UnifiedCatalogClient:
         :param parent_id: Optional ID of the parent term.
         :param owners: Optional ids of the owners of the term.
         :param status: Optional status of the term.
-        :param acronyms: Optional list of acronyms for the term. Each acronym should be a dictionary with 'name' and 'url' keys.
-        :param resources: Optional list of resources for the term. Each resource should be a dictionary with 'name' and 'url' keys.
+        :param acronyms: Optional list of acronyms for the term. Each acronym
+            should be a dictionary with 'name' and 'url' keys.
+        :param resources: Optional list of resources for the term. Each
+            resource should be a dictionary with 'name' and 'url' keys.
         :return: The created term.
         """
 
@@ -159,11 +180,11 @@ class UnifiedCatalogClient:
             "description": description,
             "domain": governance_domain_id,
             "parent_id": parent_id,
-            "contacts": {"owner": [{"id": owner["id"]} for owner in owners]},
-            "acronyms": acronyms,
+            "contacts": {"owner": [{"id": owner["id"]} for owner in (owners or [])]},
+            "acronyms": acronyms or [],
             "resources": [
                 {"name": resource["name"], "url": resource["url"]}
-                for resource in resources
+                for resource in (resources or [])
             ],
             "status": status,
         }
@@ -178,9 +199,9 @@ class UnifiedCatalogClient:
         description: str = None,
         governance_domain_id: str = None,
         parent_id: str = None,
-        owners: List[dict] = [],
-        acronyms: List[str] = [],
-        resources: List[dict] = [],
+        owners: List[dict] = None,
+        acronyms: List[str] = None,
+        resources: List[dict] = None,
         status: TermStatus = "Draft",
     ):
         """
@@ -193,8 +214,10 @@ class UnifiedCatalogClient:
         :param parent_id: Optional new ID of the parent term.
         :param owners: Optional new ids of the owners of the term.
         :param status: Optional new status of the term.
-        :param acronyms: Optional new list of acronyms for the term. Each acronym should be a dictionary with 'name' and 'url' keys.
-        :param resources: Optional new list of resources for the term. Each resource should be a dictionary with 'name' and 'url' keys.
+        :param acronyms: Optional new list of acronyms for the term. Each
+            acronym should be a dictionary with 'name' and 'url' keys.
+        :param resources: Optional new list of resources for the term. Each
+            resource should be a dictionary with 'name' and 'url' keys.
         :return: The updated term.
         """
 
@@ -204,11 +227,11 @@ class UnifiedCatalogClient:
             "description": description,
             "domain": governance_domain_id,
             "parent_id": parent_id,
-            "contacts": {"owner": [{"id": owner["id"]} for owner in owners]},
-            "acronyms": acronyms,
+            "contacts": {"owner": [{"id": owner["id"]} for owner in (owners or [])]},
+            "acronyms": acronyms or [],
             "resources": [
                 {"name": resource["name"], "url": resource["url"]}
-                for resource in resources
+                for resource in (resources or [])
             ],
             "status": status,
         }
@@ -257,10 +280,13 @@ class UnifiedCatalogClient:
         """
         Create a relationship between entities.
 
-        :param entity_type: The type of the entity (Term, DataProduct, CriticalDataElement).
+        :param entity_type: The type of the entity (Term, DataProduct,
+            CriticalDataElement).
         :param entity_id: The ID of the entity to create the relationship for.
-        :param relationship_type: The type of the relationship (Synonym or Related).
-        :param target_entity_id: The ID of the target entity to create the relationship with.
+        :param relationship_type: The type of the relationship (Synonym or
+            Related).
+        :param target_entity_id: The ID of the target entity to create the
+            relationship with.
         :param description: Optional description of the relationship.
         :return: The created relationship.
         """
@@ -296,10 +322,12 @@ class UnifiedCatalogClient:
         """
         Delete a relationship between entities.
 
-        :param entity_type: The type of the entity (Term, DataProduct, CriticalDataElement).
+        :param entity_type: The type of the entity (Term, DataProduct,
+            CriticalDataElement).
         :param entity_id: The ID of the entity to delete the relationship from.
         :param target_entity_id: The ID of the related entity.
-        :param relationship_type: The type of the relationship (Synonym or Related).
+        :param relationship_type: The type of the relationship (Synonym or
+            Related).
         :return: The response from the API.
         """
 
@@ -395,8 +423,12 @@ class UnifiedCatalogClient:
         :return: List of data products.
         """
 
-        response = self.api_client.get(f"/dataproducts?domainId={governance_domain_id}")
-        return response.data["value"]
+        response = self.api_client.get(
+            f"/dataproducts?domainId={governance_domain_id}"
+        )
+        if isinstance(response.data, dict) and "value" in response.data:
+            return response.data["value"]
+        return response.data
 
     def get_data_product_by_id(self, data_product_id: str):
         """
@@ -414,12 +446,12 @@ class UnifiedCatalogClient:
         name: str,
         description: str,
         governance_domain_id: str,
-        type: DataProductType,
+        product_type: DataProductType,
         business_use: str,
-        owners: List[dict] = [],
-        audience: List[str] = [],
-        terms_of_use: List[str] = [],
-        documentation: List[str] = [],
+        owners: List[dict] = None,
+        audience: List[str] = None,
+        terms_of_use: List[str] = None,
+        documentation: List[str] = None,
         updateFrequency: DataProductUpdateFrequency = None,
         status: DataProductStatus = "Draft",
         endorsed: bool = False,
@@ -434,11 +466,15 @@ class UnifiedCatalogClient:
         :param business_use: The business use of the data product.
         :param owners: Optional ids of the owners of the data product.
         :param audience: Optional list of audience for the data product.
-        :param terms_of_use: Optional list of terms of use for the data product.
-        :param documentation: Optional list of documentation for the data product.
-        :param updateFrequency: Optional update frequency of the data product.
+        :param terms_of_use: Optional list of terms of use for the data
+            product.
+        :param documentation: Optional list of documentation for the data
+            product.
+        :param updateFrequency: Optional update frequency of the data
+            product.
         :param status: Optional status of the data product.
-        :param endorsed: Optional boolean indicating if the data product is endorsed.
+        :param endorsed: Optional boolean indicating if the data product is
+            endorsed.
         :return: The created data product.
         """
 
@@ -446,17 +482,17 @@ class UnifiedCatalogClient:
             "name": name,
             "description": description,
             "domain": governance_domain_id,
-            "type": type,
+            "type": product_type,
             "businessUse": business_use,
             "contacts": {
                 "owner": [
                     {"id": owner["id"], "description": owner.get("description", "")}
-                    for owner in owners
+                    for owner in (owners or [])
                 ]
             },
-            "audience": audience,
-            "termsOfUse": terms_of_use,
-            "documentation": documentation,
+            "audience": audience or [],
+            "termsOfUse": terms_of_use or [],
+            "documentation": documentation or [],
             "updateFrequency": updateFrequency,
             "status": status,
             "endorsed": endorsed,
@@ -470,12 +506,12 @@ class UnifiedCatalogClient:
         name: str = None,
         description: str = None,
         governance_domain_id: str = None,
-        type: str = None,
+        product_type: str = None,
         business_use: str = None,
-        owners: List[dict] = [],
-        audience: List[str] = [],
-        terms_of_use: List[str] = [],
-        documentation: List[str] = [],
+        owners: List[dict] = None,
+        audience: List[str] = None,
+        terms_of_use: List[str] = None,
+        documentation: List[str] = None,
         updateFrequency: DataProductUpdateFrequency = None,
         status: DataProductStatus = "Draft",
         endorsed: bool = False,
@@ -490,11 +526,15 @@ class UnifiedCatalogClient:
         :param business_use: The new business use of the data product.
         :param owners: Optional new ids of the owners of the data product.
         :param audience: Optional new list of audience for the data product.
-        :param terms_of_use: Optional new list of terms of use for the data product.
-        :param documentation: Optional new list of documentation for the data product.
-        :param updateFrequency: Optional new update frequency of the data product.
+        :param terms_of_use: Optional new list of terms of use for the data
+            product.
+        :param documentation: Optional new list of documentation for the
+            data product.
+        :param updateFrequency: Optional new update frequency of the data
+            product.
         :param status: Optional new status of the data product.
-        :param endorsed: Optional new boolean indicating if the data product is endorsed.
+        :param endorsed: Optional new boolean indicating if the data product
+            is endorsed.
         :return: The updated data product.
         """
         data = {
@@ -502,23 +542,25 @@ class UnifiedCatalogClient:
             "name": name,
             "description": description,
             "domain": governance_domain_id,
-            "type": type,
+            "type": product_type,
             "businessUse": business_use,
             "contacts": {
                 "owner": [
                     {"id": owner["id"], "description": owner.get("description", "")}
-                    for owner in owners
+                    for owner in (owners or [])
                 ]
             },
-            "audience": audience,
-            "termsOfUse": terms_of_use,
-            "documentation": documentation,
+            "audience": audience or [],
+            "termsOfUse": terms_of_use or [],
+            "documentation": documentation or [],
             "updateFrequency": updateFrequency,
             "status": status,
             "endorsed": endorsed,
         }
 
-        response = self.api_client.put(f"/dataproducts/{data_product_id}", data=data)
+        response = self.api_client.put(
+            f"/dataproducts/{data_product_id}", data=data
+        )
         return response.data
 
     def delete_data_product(self, data_product_id: str):
@@ -539,8 +581,11 @@ class UnifiedCatalogClient:
 
     # TODO: Data Product Term Relationship (Create, Delete)
     # Create: dataproducts/<data-product-id>/relationships?entityType=Term
-    # {"entityId":"94e22736-067d-4283-9806-1efdbac07297","description":"Test Term Description","relationshipType":"Related"}
-    # Delete: dataproducts/58ddd299-5434-493b-956f-01c76171621f/relationships?entityType=Term&entityId=4939d006-fff0-4bad-9b03-53700b48b31b&relationshipType=Related
+    # {"entityId":"94e22736-067d-4283-9806-1efdbac07297",
+    #  "description":"Test Term Description","relationshipType":"Related"}
+    # Delete: dataproducts/58ddd299-5434-493b-956f-01c76171621f/relationships
+    # ?entityType=Term&entityId=4939d006-fff0-4bad-9b03-53700b48b31b
+    # &relationshipType=Related
 
     # Objectives
     ObjectiveStatus = Literal["Draft", "Published", "Closed"]
@@ -549,7 +594,7 @@ class UnifiedCatalogClient:
         self,
         definition: str,
         governance_domain_id: str,
-        owners: List[dict] = [],
+        owners: List[dict] = None,
         status: ObjectiveStatus = "Draft",
         target_date: str = None,
     ):
@@ -569,7 +614,7 @@ class UnifiedCatalogClient:
             "contacts": {
                 "owner": [
                     {"id": owner["id"], "description": owner.get("description", "")}
-                    for owner in owners
+                    for owner in (owners or [])
                 ]
             },
             "status": status,
@@ -587,7 +632,9 @@ class UnifiedCatalogClient:
         :return: List of objectives.
         """
 
-        response = self.api_client.get(f"/objectives?domainId={governance_domain_id}")
+        response = self.api_client.get(
+            f"/objectives?domainId={governance_domain_id}"
+        )
         return response.data["value"]
 
     def get_objective_by_id(self, objective_id: str):
@@ -606,7 +653,7 @@ class UnifiedCatalogClient:
         objective_id: str,
         definition: str = None,
         governance_domain_id: str = None,
-        owners: List[dict] = [],
+        owners: List[dict] = None,
         status: ObjectiveStatus = "Draft",
         target_date: str = None,
     ):
@@ -618,7 +665,8 @@ class UnifiedCatalogClient:
         :param governance_domain_id: The new ID of the governance domain.
         :param owners: Optional new ids of the owners of the objective.
         :param status: Optional new status of the objective.
-        :param target_date: Optional new target date of the objective. Eg: "2025-01-01T00:00:00Z"
+        :param target_date: Optional new target date of the objective. Eg:
+            "2025-01-01T00:00:00Z"
         :return: The updated objective.
         """
 
@@ -628,7 +676,7 @@ class UnifiedCatalogClient:
             "contacts": {
                 "owner": [
                     {"id": owner["id"], "description": owner.get("description", "")}
-                    for owner in owners
+                    for owner in (owners or [])
                 ]
             },
             "status": status,
@@ -636,7 +684,9 @@ class UnifiedCatalogClient:
             "targetDate": target_date,
         }
 
-        response = self.api_client.put(f"/objectives/{objective_id}", data=data)
+        response = self.api_client.put(
+            f"/objectives/{objective_id}", data=data
+        )
         return response.data
 
     def delete_objective(self, objective_id: str):
@@ -663,7 +713,7 @@ class UnifiedCatalogClient:
         name: str,
         description: str,
         governance_domain_id: str,
-        owners: List[dict] = [],
+        owners: List[dict] = None,
         status: CriticalDataElementStatus = "Draft",
         data_type: str = "Number",
     ):
@@ -673,7 +723,8 @@ class UnifiedCatalogClient:
         :param name: The name of the critical data element.
         :param description: The description of the critical data element.
         :param governance_domain_id: The ID of the governance domain.
-        :param owners: Optional ids of the owners of the critical data element.
+        :param owners: Optional ids of the owners of the critical data
+            element.
         :param status: Optional status of the critical data element.
         :param data_type: The data type of the critical data element.
         :return: The created critical data element.
@@ -686,7 +737,7 @@ class UnifiedCatalogClient:
             "contacts": {
                 "owner": [
                     {"id": owner["id"], "description": owner.get("description", "")}
-                    for owner in owners
+                    for owner in (owners or [])
                 ]
             },
             "status": status,
@@ -724,7 +775,7 @@ class UnifiedCatalogClient:
         name: str = None,
         description: str = None,
         governance_domain_id: str = None,
-        owners: List[dict] = [],
+        owners: List[dict] = None,
         status: CriticalDataElementStatus = "Draft",
         data_type: str = "Number",
     ):
@@ -735,7 +786,8 @@ class UnifiedCatalogClient:
         :param name: The new name of the critical data element.
         :param description: The new description of the critical data element.
         :param governance_domain_id: The new ID of the governance domain.
-        :param owners: Optional new ids of the owners of the critical data element.
+        :param owners: Optional new ids of the owners of the critical data
+            element.
         :param status: Optional new status of the critical data element.
         :param data_type: The new data type of the critical data element.
         :return: The updated critical data element.
@@ -747,7 +799,7 @@ class UnifiedCatalogClient:
             "contacts": {
                 "owner": [
                     {"id": owner["id"], "description": owner.get("description", "")}
-                    for owner in owners
+                    for owner in (owners or [])
                 ]
             },
             "status": status,
@@ -756,7 +808,9 @@ class UnifiedCatalogClient:
             "dataType": data_type,
         }
 
-        response = self.api_client.put(f"/criticalDataElements/{cde_id}", data=data)
+        response = self.api_client.put(
+            f"/criticalDataElements/{cde_id}", data=data
+        )
         return response.data
 
     def delete_critical_data_element(self, cde_id: str):
@@ -782,7 +836,7 @@ class UnifiedCatalogClient:
         self,
         progress: int,
         goal: int,
-        max: int,
+        maximum: int,
         status: KeyResultStatus,
         definition: str,
         objective_id: str,
@@ -793,24 +847,26 @@ class UnifiedCatalogClient:
 
         :param progress: The progress of the key result.
         :param goal: The goal of the key result.
-        :param max: The maximum value of the key result.
+        :param maximum: The maximum value of the key result.
         :param status: The status of the key result.
         :param definition: The definition of the key result.
         :param objective_id: The ID of the objective.
         :param governance_domain_id: The ID of the governance domain.
         :return: The created key result.
-        :raises ValueError: If progress, goal, or max are negative integers.
+        :raises ValueError: If progress, goal, or maximum are negative
+            integers.
         """
 
-        if progress < 0 or goal < 0 or max <= 0:
+        if progress < 0 or goal < 0 or maximum <= 0:
             raise ValueError(
-                "Progress and goal must be zero (0) or positive integers, max must be a positive integer."
+                "Progress and goal must be zero (0) or positive integers, "
+                "max must be a positive integer."
             )
 
         data = {
             "progress": progress,
             "goal": goal,
-            "max": max,
+            "max": maximum,
             "status": status,
             "definition": definition,
             "domainId": governance_domain_id,
@@ -827,7 +883,7 @@ class UnifiedCatalogClient:
         governance_domain_id: str,
         progress: int = None,
         goal: int = None,
-        max: int = None,
+        maximum: int = None,
         status: KeyResultStatus = None,
         definition: str = None,
     ):
@@ -839,23 +895,25 @@ class UnifiedCatalogClient:
         :param governance_domain_id: The ID of the governance domain.
         :param progress: The new progress of the key result.
         :param goal: The new goal of the key result.
-        :param max: The new maximum value of the key result.
+        :param maximum: The new maximum value of the key result.
         :param status: The new status of the key result.
         :param definition: The new definition of the key result.
         :return: The updated key result.
-        :raises ValueError: If progress, goal, or max are negative integers.
+        :raises ValueError: If progress, goal, or maximum are negative
+            integers.
         """
 
-        if progress < 0 or goal < 0 or max <= 0:
+        if progress < 0 or goal < 0 or maximum <= 0:
             raise ValueError(
-                "Progress and goal must be zero (0) or positive integers, max must be a positive integer."
+                "Progress and goal must be zero (0) or positive integers, "
+                "max must be a positive integer."
             )
 
         data = {
             "id": key_result_id,
             "progress": progress,
             "goal": goal,
-            "max": max,
+            "max": maximum,
             "status": status,
             "definition": definition,
             "domainId": governance_domain_id,
@@ -893,7 +951,9 @@ class UnifiedCatalogClient:
         :return: List of key results.
         """
 
-        response = self.api_client.get(f"/objectives/{objective_id}/keyResults")
+        response = self.api_client.get(
+            f"/objectives/{objective_id}/keyResults"
+        )
         return response.data["value"]
 
     def get_key_result_by_id(self, key_result_id: str, objective_id: str):

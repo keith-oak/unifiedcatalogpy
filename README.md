@@ -1,6 +1,6 @@
-![Banner](https://raw.githubusercontent.com/olafwrieden/unifiedcatalogpy/main/assets/media/banner.png)
-
 # Introducing: UnifiedCatalogPy
+
+![Banner](https://raw.githubusercontent.com/olafwrieden/unifiedcatalogpy/main/assets/media/banner.png)
 
 An unofficial Python wrapper for Microsoft Purview Data Governance's Unified Catalog API. Not affiliated or officially supported by Microsoft. Built as a personal project by tediously observing the internet browser's XHR network traffic and reverse engineering the API - ☕️ [buy me a coffee](https://buymeacoffee.com/olafwrieden).
 
@@ -52,7 +52,7 @@ If you are using the Azure CLI, be sure to log in using `az login` before runnin
 1. ️Navigate to the Azure portal to [create a new Service Principal](https://learn.microsoft.com/en-us/purview/tutorial-using-rest-apis) for your application and generate a client secret.
 2. Copy the Application (client) ID, Directory (tenant) ID, and Client Secret (value) into your Python environment variables.
 
-   ```
+   ```bash
    AZURE_CLIENT_ID=
    AZURE_TENANT_ID=
    AZURE_CLIENT_SECRET=
@@ -728,7 +728,7 @@ Track your journey to complete data governance by monitoring health controls to 
 
 #### Health Actions (preview)
 
-Health actions are concrete steps you can take to improve data governance across your data estate. The actions are provided in a single list that can focus your data governance journey, and democratize ownership. Completing these actions will improve data quality and discoverability across your data estate. [Learn more](https://learn.microsoft.com/en-us/purview/data-estate-health-actions)
+Health actions are concrete steps you can take to improve data governance across your data estate. The actions are provided in a single list that can focus your data governance journey, and democratise ownership. Completing these actions will improve data quality and discoverability across your data estate. [Learn more](https://learn.microsoft.com/en-us/purview/data-estate-health-actions)
 
 > [!WARNING]
 > You cannot interact with Health Actions through this library yet. This is work in progress. A pull request to add this functionality is welcome.

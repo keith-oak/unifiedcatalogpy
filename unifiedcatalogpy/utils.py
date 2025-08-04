@@ -1,3 +1,6 @@
+"""Utility functions for the Unified Catalog client."""
+
+
 def format_base_url(account_id: str) -> str:
     """
     Format the base URL for the Unified Catalog API.
@@ -6,5 +9,6 @@ def format_base_url(account_id: str) -> str:
     :return: The formatted base URL.
     """
     return (
-        f"https://{account_id}-api.purview-service.microsoft.com/datagovernance/catalog"
+        f"https://{account_id}-api.purview-service.microsoft.com/"
+        "datagovernance/catalog"
     )
